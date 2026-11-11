@@ -18,6 +18,7 @@ import {
   Layers,
 } from "lucide-react";
 import { colors, activeDeadline } from "@/lib/catalog.mjs";
+import Reviews from "@/components/reviews";
 
 export default function Storefront({
   ready,
@@ -263,7 +264,7 @@ export default function Storefront({
               <div className="divider" />
               <fieldset className="color-field">
                 <legend>
-                  <span className="field-step">01</span> Culoarea ta{" "}
+                  Alege culoarea{" "}
                   <strong aria-live="polite">{selected.name}</strong>
                 </legend>
                 <div className="swatches">
@@ -338,9 +339,7 @@ export default function Storefront({
                   </strong>
                 </div>
               )}
-              <div className="purchase-label">
-                <span className="field-step">02</span> Câte seturi îți dorești?
-              </div>
+              <div className="purchase-label">Câte seturi îți dorești?</div>
               <div className="purchase-row">
                 <div className="quantity">
                   <button
@@ -468,6 +467,7 @@ export default function Storefront({
             </div>
           </div>
         </section>
+        <Reviews />
         <section className="editorial">
           <div className="editorial-image">
             <Image

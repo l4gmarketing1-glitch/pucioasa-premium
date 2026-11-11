@@ -60,6 +60,62 @@ try {
       .count(),
     0,
   );
+  await page
+    .getByRole("button", { name: "Scrie o recenzie", exact: true })
+    .click();
+  const reviewDialog = page.getByRole("dialog");
+  assert.ok(await reviewDialog.isVisible());
+  assert.equal(
+    await reviewDialog.locator("form").evaluate((form) => form.checkValidity()),
+    false,
+  );
+  await reviewDialog
+    .getByRole("radio", { name: "5 stele", exact: true })
+    .check();
+  await reviewDialog
+    .getByLabel("Numele de afișat", { exact: true })
+    .fill("Client test");
+  await reviewDialog
+    .getByLabel("Experiența ta", { exact: true })
+    .fill("Text pentru verificarea formularului, fără publicare.");
+  await reviewDialog.getByRole("checkbox").check();
+  assert.equal(
+    await reviewDialog.locator("form").evaluate((form) => form.checkValidity()),
+    true,
+  );
+  await reviewDialog
+    .getByRole("button", { name: "Pregătește emailul" })
+    .click();
+  await page.screenshot({ path: "/tmp/pucioasa-review-dialog.png" });
+  assert.match(
+    await reviewDialog.getByRole("status").innerText(),
+    /doar după ce trimiți mesajul/,
+  );
+  const reviewEmail = await reviewDialog
+    .getByRole("link", { name: "Deschide aplicația de email" })
+    .getAttribute("href");
+  assert.ok(reviewEmail.startsWith("mailto:contact@pucioasa-premium.ro?"));
+  assert.match(new URL(reviewEmail).searchParams.get("body"), /Evaluare: 5\/5/);
+  await reviewDialog
+    .getByLabel("Experiența ta", { exact: true })
+    .fill("O altă opinie de test care trebuie pregătită din nou.");
+  assert.equal(
+    await reviewDialog
+      .getByRole("link", { name: "Deschide aplicația de email" })
+      .count(),
+    0,
+  );
+  await page.keyboard.press("Escape");
+  assert.equal(await reviewDialog.isVisible(), false);
+  assert.equal(
+    await page
+      .getByRole("button", { name: "Scrie o recenzie", exact: true })
+      .evaluate((el) => el === document.activeElement),
+    true,
+  );
+  await page
+    .locator("#recenzii")
+    .screenshot({ path: "/tmp/pucioasa-recenzii.png" });
   await page.getByText("Livrare & transport", { exact: true }).click();
   assert.match(
     await page.locator("#intrebari details[open] p").innerText(),
@@ -113,10 +169,21 @@ try {
     );
   }
   await page.setViewportSize({ width: 390, height: 844 });
+  await page
+    .locator("#recenzii")
+    .screenshot({
+      path: "/tmp/pucioasa-recenzii-mobil.png",
+      style: ".mobile-buy { visibility: hidden; }",
+    });
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.locator(".mobile-buy .primary").waitFor({ state: "visible" });
   await page.screenshot({ path: "/tmp/pucioasa-mobile.png", fullPage: false });
-  await page.locator(".product-info").screenshot({path:"/tmp/pucioasa-selectie-mobil.png",style:".mobile-buy { visibility: hidden; }"});
+  await page
+    .locator(".product-info")
+    .screenshot({
+      path: "/tmp/pucioasa-selectie-mobil.png",
+      style: ".mobile-buy { visibility: hidden; }",
+    });
   assert.equal((await fetch(origin + "/admin")).status, 401);
   assert.equal(
     (

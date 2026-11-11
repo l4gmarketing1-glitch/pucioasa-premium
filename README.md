@@ -51,3 +51,7 @@ Publish only genuine reviews with author permission and a documented verificatio
 ## Outstanding before launch
 
 Stripe, Vercel and Search Console credentials are not connected here, and no real or Stripe test payment has been executed. The header uses a typographic brand treatment inspired by the supplied logo; the original inline logo is not available as a local asset. All 19 JPG photographs from the ZIP are integrated. Material and legal business details remain required. The admin panel displays orders but does not manage stock, shipping or refunds.
+
+## Reviews
+
+The reviews section shows an honest empty state until genuine reviews are available. The accessible modal prepares a `mailto:` message; the customer must send it from their email app. It does not store or automatically publish submissions. After manually verifying a purchase and the publication consent, add only the public fields to `lib/reviews.ts`. Never include the private order reference.
