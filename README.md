@@ -74,6 +74,6 @@ The public review gallery appears before the “Momente mici” invitation card.
 
 Both order cards show the same rating badge, calculated from the public review collection. The count and star fill update from the actual records. `/admin/recenzii-preview` remains protected and excluded from indexing, and previews the same published collection and badge.
 
-The gallery initially displays three cards on mobile and eleven on desktop. “Vezi mai multe recenzii” loads three more on mobile or ten more on desktop (11 → 21 → 31 → 41), capped at the available records. Expanded cards remain visible across viewport changes. The gallery has no numerical pagination counters. Review text uses Georgia at 17px desktop and 16px mobile; author names are 18px desktop and 19px mobile.
+The gallery initially displays seven cards on mobile and eleven on desktop. “Vezi mai multe recenzii” loads seven more on mobile (7 → 14 → 21 → 28 → 35 → 41) or ten more on desktop (11 → 21 → 31 → 41), capped at the available records. Expanded cards remain visible across viewport changes. The gallery has no numerical pagination counters. Review text uses Georgia at 17px desktop and 16px mobile; author names are 18px desktop and 19px mobile.
 
 The homepage hero uses the owner-supplied `public/images/hero-lenjerie-visinie.jpg`. Product variant photographs remain in `public/products/`.

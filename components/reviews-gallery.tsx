@@ -26,8 +26,8 @@ export default function ReviewsGallery({
     mobileSnapshot,
     serverSnapshot,
   );
-  const initialCount = mobile ? 3 : 11;
-  const pageSize = mobile ? 3 : 10;
+  const initialCount = mobile ? 7 : 11;
+  const pageSize = mobile ? 7 : 10;
   const [expandedCount, setExpandedCount] = useState<number | null>(null);
   const visibleCount = Math.min(
     entries.length,

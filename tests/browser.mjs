@@ -219,10 +219,15 @@ try {
   assert.equal((await fetch(origin + "/admin/recenzii-preview")).status,401);
   assert.equal(await page.locator('.review-demo-note').count(),0);
   assert.equal(await page.getByRole('link',{name:'41 recenzii, evaluare medie 5 din 5 stele'}).count(),2);
-  assert.equal(await page.locator('.photo-review-card').count(),3);
+  assert.equal(await page.locator('.photo-review-card').count(),7);
   assert.ok(await page.evaluate(()=>Boolean(document.querySelector('.reviews-showcase').compareDocumentPosition(document.querySelector('.review-invitation')) & Node.DOCUMENT_POSITION_FOLLOWING)));
   await page.getByRole('button',{name:/Vezi mai multe recenzii/}).click();
-  assert.equal(await page.locator('.photo-review-card').count(),6);
+  assert.equal(await page.locator('.photo-review-card').count(),14);
+  for (const expected of [21, 28, 35, 41]) {
+    await page.getByRole('button',{name:'Vezi mai multe recenzii'}).click();
+    assert.equal(await page.locator('.photo-review-card').count(), expected);
+  }
+  assert.equal(await page.getByRole('button',{name:'Vezi mai multe recenzii'}).count(),0);
   assert.equal(await page.locator('.review-verified').count(),0);
   assert.equal(await page.locator('.review-demo-label').count(),0);
   assert.equal(await page.locator('.review-verification-demo').count(),0);
@@ -245,18 +250,21 @@ try {
   assert.equal(await preview.locator('.review-verified').count(),0);
   await preview.screenshot({path:'/tmp/pucioasa-demo-recenzii.png',fullPage:true});
   await preview.setViewportSize({width:390,height:844});
-  await preview.waitForFunction(()=>document.querySelectorAll('.photo-review-card').length===3);
+  await preview.waitForFunction(()=>document.querySelectorAll('.photo-review-card').length===7);
   assert.ok(await preview.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await preview.screenshot({path:'/tmp/pucioasa-demo-recenzii-mobil.png',fullPage:true});
   await preview.getByRole('button',{name:/Vezi mai multe recenzii/}).click();
-  assert.equal(await preview.locator('.photo-review-card').count(),6);
+  assert.equal(await preview.locator('.photo-review-card').count(),14);
   await preview.setViewportSize({width:1440,height:1000});
-  await preview.waitForFunction(()=>document.querySelectorAll('.photo-review-card').length===11);
+  await preview.waitForFunction(()=>document.querySelectorAll('.photo-review-card').length===14);
   await preview.getByRole('button',{name:/Vezi mai multe recenzii/}).click();
-  assert.equal(await preview.locator('.photo-review-card').count(),21);
+  assert.equal(await preview.locator('.photo-review-card').count(),24);
   await preview.setViewportSize({width:390,height:844});
-  assert.equal(await preview.locator('.photo-review-card').count(),21);
-  for(let batch=0;batch<7;batch++) await preview.getByRole('button',{name:/Vezi mai multe recenzii/}).click();
+  assert.equal(await preview.locator('.photo-review-card').count(),24);
+  for (const expected of [31, 38, 41]) {
+    await preview.getByRole('button',{name:'Vezi mai multe recenzii'}).click();
+    assert.equal(await preview.locator('.photo-review-card').count(), expected);
+  }
   assert.equal(await preview.locator('.photo-review-card').count(),41);
   assert.equal(await preview.locator('.review-photo').count(),3);
   assert.equal(await preview.locator('.review-stars[aria-label="5 din 5 stele"]').count(),41);
