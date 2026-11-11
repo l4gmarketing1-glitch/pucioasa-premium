@@ -48,6 +48,7 @@ try {
   const primaryProduct = page.locator("#produs");
   const repeatProduct = page.locator("#comanda");
   assert.equal(await page.locator("h1").count(), 1);
+  assert.equal(await page.locator(".photo-review-card").count(), 11);
   assert.equal(await page.locator(".hero .eyebrow").count(), 0);
   assert.equal(await page.locator(".editorial").count(), 0);
   assert.equal(await repeatProduct.locator(".swatch").count(), 19);
@@ -216,7 +217,7 @@ try {
   assert.match(await page.locator('.review-demo-note').innerText(), /evaluările sunt fictive/);
   assert.equal(await page.locator('.photo-review-card').count(),3);
   assert.ok(await page.evaluate(()=>Boolean(document.querySelector('.reviews-showcase').compareDocumentPosition(document.querySelector('.review-invitation')) & Node.DOCUMENT_POSITION_FOLLOWING)));
-  await page.getByRole('button',{name:/Încarcă mai multe recenzii/}).click();
+  await page.getByRole('button',{name:/Vezi mai multe recenzii/}).click();
   assert.equal(await page.locator('.photo-review-card').count(),6);
   assert.equal(await page.locator('.review-verified').count(),0);
   assert.equal(await page.locator('.review-demo-label').count(),0);
@@ -229,21 +230,29 @@ try {
   assert.match(await preview.locator('.reviews-showcase .review-demo-note').innerText(),/evaluările sunt fictive/);
   assert.equal(await preview.getByRole('link', {name: '41 recenzii, evaluare medie 5 din 5 stele'}).count(), 1);
   await preview.locator('.rating-design-preview').screenshot({path:'/tmp/pucioasa-badge-preview.png'});
-  assert.equal(await preview.locator('.photo-review-card').count(),6);
+  assert.equal(await preview.locator('.photo-review-card').count(),11);
+  for (const expected of [21, 31, 41]) {
+    await preview.getByRole('button',{name:'Vezi mai multe recenzii'}).click();
+    assert.equal(await preview.locator('.photo-review-card').count(), expected);
+  }
+  assert.equal(await preview.getByRole('button',{name:'Vezi mai multe recenzii'}).count(), 0);
+  await preview.reload({waitUntil:'networkidle'});
+  assert.equal(await preview.locator('.photo-review-card').count(),11);
   assert.equal(await preview.locator('.review-verified').count(),0);
   await preview.screenshot({path:'/tmp/pucioasa-demo-recenzii.png',fullPage:true});
   await preview.setViewportSize({width:390,height:844});
   await preview.waitForFunction(()=>document.querySelectorAll('.photo-review-card').length===3);
   assert.ok(await preview.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await preview.screenshot({path:'/tmp/pucioasa-demo-recenzii-mobil.png',fullPage:true});
-  await preview.getByRole('button',{name:/Încarcă mai multe recenzii/}).click();
+  await preview.getByRole('button',{name:/Vezi mai multe recenzii/}).click();
   assert.equal(await preview.locator('.photo-review-card').count(),6);
   await preview.setViewportSize({width:1440,height:1000});
-  await preview.getByRole('button',{name:/Încarcă mai multe recenzii/}).click();
-  assert.equal(await preview.locator('.photo-review-card').count(),12);
+  await preview.waitForFunction(()=>document.querySelectorAll('.photo-review-card').length===11);
+  await preview.getByRole('button',{name:/Vezi mai multe recenzii/}).click();
+  assert.equal(await preview.locator('.photo-review-card').count(),21);
   await preview.setViewportSize({width:390,height:844});
-  assert.equal(await preview.locator('.photo-review-card').count(),12);
-  for(let batch=0;batch<10;batch++) await preview.getByRole('button',{name:/Încarcă mai multe recenzii/}).click();
+  assert.equal(await preview.locator('.photo-review-card').count(),21);
+  for(let batch=0;batch<7;batch++) await preview.getByRole('button',{name:/Vezi mai multe recenzii/}).click();
   assert.equal(await preview.locator('.photo-review-card').count(),41);
   assert.equal(await preview.locator('.review-photo').count(),3);
   assert.equal(await preview.locator('.review-stars[aria-label="Evaluare demonstrativă: 5 din 5 stele"]').count(),41);
@@ -255,7 +264,7 @@ try {
   assert.equal(messages[0], 'Superbe recomand!');
   assert.equal(messages[14], 'Sunt cele mai bune lenjerii !!! Calitate 100%.');
   assert.equal(await preview.locator('.photo-review-card').filter({hasNot:preview.locator('.review-message')}).count(),26);
-  assert.equal(await preview.getByRole('button',{name:/Încarcă mai multe recenzii/}).count(),0);
+  assert.equal(await preview.getByRole('button',{name:/Vezi mai multe recenzii/}).count(),0);
   await adminContext.close();
 
   assert.equal(

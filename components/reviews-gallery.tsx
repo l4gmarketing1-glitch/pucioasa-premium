@@ -26,11 +26,12 @@ export default function ReviewsGallery({
     mobileSnapshot,
     serverSnapshot,
   );
-  const pageSize = mobile ? 3 : 6;
+  const initialCount = mobile ? 3 : 11;
+  const pageSize = mobile ? 3 : 10;
   const [expandedCount, setExpandedCount] = useState<number | null>(null);
   const visibleCount = Math.min(
     entries.length,
-    Math.max(pageSize, expandedCount ?? pageSize),
+    Math.max(initialCount, expandedCount ?? initialCount),
   );
   if (!entries.length) return null;
   return (
@@ -114,7 +115,7 @@ export default function ReviewsGallery({
             setExpandedCount(Math.min(visibleCount + pageSize, entries.length))
           }
         >
-          Încarcă mai multe recenzii
+          Vezi mai multe recenzii
           <ArrowDown size={16} />
         </button>
       )}
