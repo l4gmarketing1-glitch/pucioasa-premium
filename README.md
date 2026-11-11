@@ -60,7 +60,7 @@ The reviews section shows an honest empty state until genuine reviews are availa
 
 The selling price is 149 RON, with shipping included, sourced from `product.amount` in `lib/catalog.mjs`. The merchant has supplied the material name Damasc Fine. Public checkout labels use “Plată securizată cu cardul”; Stripe remains the actual provider and is accurately identified in the legal/privacy disclosures.
 
-`REFERENCE_PRICE_RON` must be an actual confirmed reference price. Leave it blank otherwise. A calculated comparison price is not evidence of a prior selling price; no 28% badge is active by default.
+The merchant confirmed a reference price of 199 RON and a selling price of 149 RON. The product selector displays the struck-through reference price and a rounded 25% discount (actual reduction approximately 25.13%). Both amounts scale with quantity. `REFERENCE_PRICE_RON` optionally overrides the confirmed catalog reference; an empty or absent value uses 199 RON. Any future override must reflect the actual reference price.
 
 To enable the genuine visitor window, set `VISITOR_OFFER_ENABLED=true` and a cryptographically random `OFFER_SIGNING_SECRET` of at least 32 characters in Vercel's secure environment settings, then redeploy. Generate locally with `openssl rand -hex 32`; never commit or paste the value in chat. The window starts only once the store is configured to accept orders. The offer API signs an 86-minute deadline in an HttpOnly, SameSite cookie. Reloads retain it, including after expiry. Checkout checks the signature and expiry on the server before contacting Stripe. An optional global `OFFER_ENDS_AT` can close the window earlier.
 

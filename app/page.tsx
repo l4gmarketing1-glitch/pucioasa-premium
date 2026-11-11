@@ -50,7 +50,9 @@ export default function Home() {
       )}
       <Storefront
         visitorOffer={visitorOfferEnabled()}
-        discount={referenceDiscount(process.env.REFERENCE_PRICE_RON)}
+        discount={referenceDiscount(
+          process.env.REFERENCE_PRICE_RON?.trim() || String(product.referenceAmount / 100),
+        )}
         ready={ready}
         deadline={process.env.OFFER_ENDS_AT || ""}
         delivery={process.env.DELIVERY_ESTIMATE || ""}

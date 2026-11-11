@@ -2,12 +2,12 @@ import { chromium } from '@playwright/test';
 import { spawn } from 'node:child_process';
 import assert from 'node:assert/strict';
 
-// Test-only offer values: these are not merchant price history or a live promotion.
+// Test-only deadline; an empty override exercises the confirmed catalog reference price.
 const now = Date.now();
 const deadline = new Date(now + 45 * 60 * 1000).toISOString();
 const origin = 'http://localhost:3101';
 const server = spawn('node', ['node_modules/next/dist/bin/next', 'start', '-p', '3101'], {
-  env: { ...process.env, SITE_URL: origin, STORE_LIVE: 'false', REFERENCE_PRICE_RON: '235', OFFER_ENDS_AT: deadline },
+  env: { ...process.env, SITE_URL: origin, STORE_LIVE: 'false', REFERENCE_PRICE_RON: '', OFFER_ENDS_AT: deadline },
   stdio: 'ignore',
 });
 let browser;
@@ -22,11 +22,11 @@ try {
   const page = await browser.newPage({viewport:{width:320,height:844},reducedMotion:'reduce'});
   await page.clock.install({time: new Date(now)});
   await page.goto(origin,{waitUntil:'networkidle'});
-  assert.match(await page.locator('.discount-line').innerText(),/235 lei/);
-  assert.match(await page.locator('.discount-line').innerText(),/37%/);
+  assert.match(await page.locator('.discount-line').innerText(),/199 lei/);
+  assert.match(await page.locator('.discount-line').innerText(),/25%/);
   assert.ok(await page.getByRole('timer').isVisible());
   await page.getByRole('button',{name:'Mărește cantitatea'}).click();
-  assert.match(await page.locator('.discount-line').innerText(),/470 lei/);
+  assert.match(await page.locator('.discount-line').innerText(),/398 lei/);
   assert.match(await page.locator('.price-row>strong').innerText(),/298/);
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await page.clock.fastForward(46*60*1000);
