@@ -186,7 +186,13 @@ try {
     });
   assert.equal((await fetch(origin + "/admin")).status, 401);
   assert.equal((await fetch(origin + "/admin/recenzii-preview")).status,401);
-  assert.equal(await page.locator('.review-demo-banner').count(),0);
+  assert.equal(await page.locator('.review-demo-banner').count(),1);
+  assert.match(await page.locator('.review-demo-banner').innerText(), /NU SUNT RECENZII ALE CLIENȚILOR/);
+  assert.equal(await page.locator('.photo-review-card').count(),3);
+  assert.ok(await page.evaluate(()=>Boolean(document.querySelector('.reviews-showcase').compareDocumentPosition(document.querySelector('#reviews-title')) & Node.DOCUMENT_POSITION_FOLLOWING)));
+  await page.getByRole('button',{name:/Încarcă mai multe recenzii/}).click();
+  assert.equal(await page.locator('.photo-review-card').count(),6);
+  assert.equal(await page.locator('.review-verified').count(),0);
   assert.equal(await page.locator('.review-demo-label').count(),0);
   assert.equal(await page.locator('.review-verification-demo').count(),0);
   const adminContext=await browser.newContext({httpCredentials:{username:'admin',password},viewport:{width:1440,height:1000},reducedMotion:'reduce'});

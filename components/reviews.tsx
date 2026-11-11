@@ -3,6 +3,7 @@
 import { useRef, useState, type FormEvent } from "react";
 import { ArrowRight, Check, Heart, Mail, Quote, Star, X } from "lucide-react";
 import { reviews } from "@/lib/reviews";
+import { reviewExamples } from "@/lib/review-examples";
 import ReviewsGallery from "@/components/reviews-gallery";
 
 export default function Reviews() {
@@ -39,7 +40,11 @@ export default function Reviews() {
       id="recenzii"
       aria-labelledby="reviews-title"
     >
-      {reviews.length > 0 && <ReviewsGallery entries={reviews} />}
+      {reviews.length > 0 ? (
+        <ReviewsGallery entries={reviews} />
+      ) : (
+        <ReviewsGallery entries={reviewExamples} demo />
+      )}
       <div className="reviews-intro">
         <span className="eyebrow">
           <span className="little-line" /> RECENZIILE CLIENȚILOR

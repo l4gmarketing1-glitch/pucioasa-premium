@@ -1,7 +1,6 @@
 import Link from "next/link";
 import ReviewsGallery from "@/components/reviews-gallery";
-import { colors } from "@/lib/catalog.mjs";
-import type { Review } from "@/lib/reviews";
+import { reviewExamples } from "@/lib/review-examples";
 
 export const dynamic = "force-dynamic";
 export const metadata = {
@@ -9,93 +8,18 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-// Server-only fixtures for the protected admin preview. Never imported into the public review collection.
-const demoNames = [
-  "Doru P.",
-  "Ilinca R.",
-  "Adelina Munteanu",
-  "Vlad C.",
-  "Cezara Dima",
-  "Anca L.",
-  "Sorin M.",
-  "Irina Pavel",
-  "Radu T.",
-  "Oana S.",
-  "Teodora N.",
-  "Rareș Banu",
-  "Diana F.",
-  "Cătălin B.",
-  "Mara D.",
-  "Anamaria Dobre",
-  "Lavinia C.",
-  "Mihnea R.",
-  "Ioana V.",
-  "Cosmin P.",
-  "Nicoleta Sava",
-  "Andreea T.",
-  "Dragoș M.",
-  "Bianca N.",
-  "Miruna Dinu",
-  "Lucian A.",
-  "Corina V.",
-  "Ștefan L.",
-  "Iulia Rusu",
-  "Alina D.",
-  "Sabina M.",
-  "Tudor C.",
-  "Simona Vasile",
-  "Raluca F.",
-  "Cristian N.",
-  "Daria S.",
-  "Roxana Petrescu",
-  "Florin R.",
-  "Camelia B.",
-  "Viorica T.",
-  "Sergiu P.",
-];
-const demoTexts = [
-  "Exemplu de recenzie despre nuanța aleasă. Aici poate apărea o impresie despre potrivirea în dormitor.",
-  "Exemplu de mesaj scurt despre experiența de cumpărare.",
-  "Exemplu de recenzie despre conținutul setului și dimensiuni.",
-  "Exemplu de impresie după primirea comenzii. Textul real va aparține clientului.",
-  "Exemplu de mesaj despre detaliile preferate ale produsului.",
-  "Exemplu de recenzie despre folosirea lenjeriei. Clientul poate adăuga și o fotografie proprie.",
-  "Exemplu de observație despre ambalare și livrare.",
-  "Exemplu de recomandare pentru alegerea culorii. Recenzia autentică va fi publicată cu acordul autorului.",
-];
-const examples: Review[] = Array.from({ length: 41 }, (_, index) => {
-  const color = colors[index % colors.length];
-  return {
-    id: `demo-${index + 1}`,
-    displayName: demoNames[index],
-    rating: 5,
-    text: index % 4 === 1 ? "" : demoTexts[index % demoTexts.length],
-    colorName: color.name,
-    publishedAt: "2026-11-11",
-    ...([0, 16, 32].includes(index)
-      ? {
-          image: {
-            src: color.image,
-            alt: `Fotografie de produs pentru exemplul demonstrativ ${index + 1}`,
-            kind: "product" as const,
-          },
-        }
-      : {}),
-  };
-});
-
 export default function ReviewPreview() {
   return (
     <main className="review-preview-page">
       <Link href="/admin" className="text-link">
         ← Înapoi la administrare
       </Link>
-      <ReviewsGallery entries={examples} demo />
+      <ReviewsGallery entries={reviewExamples} demo />
       <p className="review-preview-note">
-        Pagina este protejată de autentificarea administratorului. Exemplele nu
-        apar în magazinul public. Numele, evaluările și textele sunt fictive. În
-        magazin, „Recenzie verificată” se afișează doar pentru opinii autentice
-        asociate unei comenzi verificate; evaluările originale se păstrează.
+        Această pagină de previzualizare este protejată. Aceleași exemple apar
+        pe pagina principală cu mențiunea vizibilă că sunt demonstrative.
+        Numele, evaluările și textele sunt fictive. „Recenzie verificată” se
+        afișează doar pentru opinii autentice asociate unor comenzi reale.
       </p>
     </main>
   );

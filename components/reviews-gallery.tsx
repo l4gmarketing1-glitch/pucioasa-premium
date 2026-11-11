@@ -42,7 +42,9 @@ export default function ReviewsGallery({
     <div className={`reviews-showcase${demo ? " reviews-showcase-demo" : ""}`}>
       {demo && (
         <p className="review-demo-banner">
-          <strong>PREVIZUALIZARE PRIVATĂ · DATE DEMONSTRATIVE</strong>
+          <strong>
+            EXEMPLE DEMONSTRATIVE · NU SUNT RECENZII ALE CLIENȚILOR
+          </strong>
           <span>
             Aceste {entries.length} exemple nu reprezintă opinii ale clienților.
             Numele, evaluările și textele sunt exemple fictive. Cele 3 imagini

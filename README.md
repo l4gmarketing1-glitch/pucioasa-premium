@@ -24,7 +24,7 @@ Validation: `npm test`, `npm run typecheck`, `npm run build`, then `npm start`.
 - `/admin` uses HTTP Basic authentication with a random password of at least 32 characters. Paginated Stripe sessions show customer, delivery address, variant, quantity and payment state. No sample customer data.
 - Orders remain in Stripe; there is no ephemeral local order database. The dashboard is read-only. Refunds are managed in Stripe Dashboard; initial Checkout payment state does not reflect later refunds or shipment state.
 - SEO metadata, canonical, robots, sitemap, Product/Offer structured data and Search Console verification support. Indexing is disabled before launch configuration.
-- No fabricated reviews, ratings, stock claims or previous prices. No advertising or analytics trackers.
+- The homepage includes a prominently labeled demonstration gallery, without verified-review claims or aggregate rating markup. Genuine reviews are kept separately. No invented stock claims or prior prices; no advertising or analytics trackers.
 
 ## Vercel and Stripe setup
 
@@ -46,7 +46,7 @@ Verify the domain with Google's DNS TXT record, or verify a URL property using `
 
 `OFFER_ENDS_AT` is an optional absolute ISO timestamp with timezone for a real offer deadline. After expiry new checkout requests are rejected. Existing Stripe sessions can still complete until their own expiry; expire them in Stripe if a strict cutoff is required. Never use a resetting per-visitor countdown.
 
-Publish only genuine reviews with author permission and a documented verification process. No demonstration reviews or ratings are published.
+Publish customer testimonials only with author permission and a documented verification process. Illustrative examples are identified visibly as fictitious and are never described as verified customer reviews.
 
 ## Outstanding before launch
 
@@ -54,7 +54,7 @@ Stripe, Vercel and Search Console credentials are not connected here, and no rea
 
 ## Reviews
 
-The reviews section shows an honest empty state until genuine reviews are available. The accessible modal prepares a `mailto:` message; the customer must send it from their email app. It does not store or automatically publish submissions. After manually verifying a purchase and the publication consent, add only the public fields to `lib/reviews.ts`. Never include the private order reference.
+The reviews section shows a clearly disclosed demonstration gallery followed by the invitation to submit genuine reviews. Once genuine reviews are available, they replace the examples. The accessible modal prepares a `mailto:` message; the customer must send it from their email app. It does not store or automatically publish submissions. After manually verifying a purchase and the publication consent, add only the public fields to `lib/reviews.ts`. Never include the private order reference.
 
 ## Current pricing and optional 86-minute offer
 
@@ -70,6 +70,6 @@ Checks: `node tests/promotion.mjs` tests the optional reference price and absolu
 
 ## Photo review presentation and private preview
 
-The public review gallery appears above the “Confortul se simte” heading only when genuine records exist in `lib/reviews.ts`. Records may include an image (`kind: customer` or `product`); product photographs are explicitly identified. Add a `verification` record only after matching the real submission to a genuine order. The public badge “Recenzie verificată” requires that record. Publish customer photographs only with permission.
+The public review gallery appears above the “Confortul se simte” heading. It uses genuine records from `lib/reviews.ts` when present; otherwise it shows `lib/review-examples.ts` with a prominent demonstration disclosure. Records may include an image (`kind: customer` or `product`); product photographs are explicitly identified. Add a `verification` record only after matching the real submission to a genuine order. The public badge “Recenzie verificată” requires that record. Publish customer photographs only with permission.
 
-`/admin/recenzii-preview` is protected by the existing admin authentication and excluded from indexing. It contains 41 clearly labeled synthetic five-star layout examples with fictional names (some abbreviated), exactly three product photographs, and a prominent section-level demonstration disclosure. Demo cards carry no verification badges. Thirty-one examples include one or two sentences of clearly illustrative placeholder text; ten have no text. These are not verified customer reviews. The examples are server-side fixtures belonging exclusively to this preview and are never imported into the public review data. The compact gallery shows optional photography, the original star rating in gold, optional review text, verification status where supported, and the display name. It initially displays three cards on mobile and six on desktop; “Încarcă mai multe recenzii” loads the same number again. Expanded cards remain visible across viewport changes. Real review ratings are never rewritten to five stars.
+`/admin/recenzii-preview` is protected by the existing admin authentication and excluded from indexing. It contains 41 clearly labeled synthetic five-star layout examples with fictional names (some abbreviated), exactly three product photographs, and a prominent section-level demonstration disclosure. Demo cards carry no verification badges. Thirty-one examples include one or two sentences of clearly illustrative placeholder text; ten have no text. These are not verified customer reviews. The same illustrative collection appears on the homepage with the section-level disclosure. It remains separate from the genuine review data and contributes no review aggregate to structured data. The compact gallery shows optional photography, the original star rating in gold, optional review text, verification status where supported, and the display name. It initially displays three cards on mobile and six on desktop; “Încarcă mai multe recenzii” loads the same number again. Expanded cards remain visible across viewport changes. Real review ratings are never rewritten to five stars.
