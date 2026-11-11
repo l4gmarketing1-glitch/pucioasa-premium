@@ -1,6 +1,6 @@
 # Pucioasa Premium
 
-Next.js storefront: 6-piece bedding set, 169 RON, 19 supplied photographs, free shipping in Romania and stated 48-hour delivery.
+Next.js storefront: 6-piece bedding set, 149 RON, 19 supplied photographs, free shipping in Romania and stated 48-hour delivery.
 
 ## Development
 
@@ -50,8 +50,20 @@ Publish only genuine reviews with author permission and a documented verificatio
 
 ## Outstanding before launch
 
-Stripe, Vercel and Search Console credentials are not connected here, and no real or Stripe test payment has been executed. The header uses a typographic brand treatment inspired by the supplied logo; the original inline logo is not available as a local asset. All 19 JPG photographs from the ZIP are integrated. Material and legal business details remain required. The admin panel displays orders but does not manage stock, shipping or refunds.
+Stripe, Vercel and Search Console credentials are not connected here, and no real or Stripe test payment has been executed. The header uses a typographic brand treatment inspired by the supplied logo; the original inline logo is not available as a local asset. All 19 JPG photographs from the ZIP are integrated. The material name Damasc Fine is provided by the merchant; legal business details remain required. The admin panel displays orders but does not manage stock, shipping or refunds.
 
 ## Reviews
 
 The reviews section shows an honest empty state until genuine reviews are available. The accessible modal prepares a `mailto:` message; the customer must send it from their email app. It does not store or automatically publish submissions. After manually verifying a purchase and the publication consent, add only the public fields to `lib/reviews.ts`. Never include the private order reference.
+
+## Current pricing and optional 86-minute offer
+
+The selling price is 149 RON, with shipping included, sourced from `product.amount` in `lib/catalog.mjs`. The merchant has supplied the material name Damasc Fine. Public checkout labels use “Plată securizată cu cardul”; Stripe remains the actual provider and is accurately identified in the legal/privacy disclosures.
+
+`REFERENCE_PRICE_RON` must be an actual confirmed reference price. Leave it blank otherwise. A calculated comparison price is not evidence of a prior selling price; no 28% badge is active by default.
+
+To enable the genuine visitor window, set `VISITOR_OFFER_ENABLED=true` and a cryptographically random `OFFER_SIGNING_SECRET` of at least 32 characters in Vercel's secure environment settings, then redeploy. Generate locally with `openssl rand -hex 32`; never commit or paste the value in chat. The window starts only once the store is configured to accept orders. The offer API signs an 86-minute deadline in an HttpOnly, SameSite cookie. Reloads retain it, including after expiry. Checkout checks the signature and expiry on the server before contacting Stripe. An optional global `OFFER_ENDS_AT` can close the window earlier.
+
+This limits the time to **start** an online order. A checkout already opened in time may be completed on Stripe until that session expires. The mechanism does not reserve physical stock, does not claim scarcity, and cannot identify an anonymous visitor after they remove cookies or use another browser. The cookie lasts up to one year to retain the campaign's expiry. Keep the signing key stable; rotating it invalidates existing offers. A later campaign needs an intentional cookie/version migration rather than automatically resetting the deadline.
+
+Checks: `node tests/promotion.mjs` tests the optional reference price and absolute deadline; `node tests/visitor-offer.mjs` tests the signed visitor window using isolated fixture settings and no Stripe payment requests.

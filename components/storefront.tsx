@@ -17,7 +17,7 @@ import {
   BedDouble,
   Layers,
 } from "lucide-react";
-import { colors, activeDeadline } from "@/lib/catalog.mjs";
+import { colors, activeDeadline, product } from "@/lib/catalog.mjs";
 import Reviews from "@/components/reviews";
 
 export default function Storefront({
@@ -25,11 +25,15 @@ export default function Storefront({
   deadline,
   delivery,
   material,
+  discount,
+  visitorOffer,
 }: {
   ready: boolean;
+  visitorOffer: boolean;
   deadline: string;
   delivery: string;
   material: string;
+  discount: { amount: number; percent: number } | null;
 }) {
   const [selected, setSelected] = useState(colors[0]);
   const [quantity, setQuantity] = useState(1);
@@ -37,6 +41,33 @@ export default function Storefront({
   const [error, setError] = useState("");
   const [menu, setMenu] = useState(false);
   const [remaining, setRemaining] = useState(0);
+  const [offerDeadline, setOfferDeadline] = useState(deadline);
+  const [offerVerified, setOfferVerified] = useState(!visitorOffer);
+  const [offerCheckFailed, setOfferCheckFailed] = useState(false);
+  useEffect(() => {
+    if (!visitorOffer || !ready) return;
+    const controller = new AbortController();
+    fetch("/api/offer", { method: "POST", signal: controller.signal })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("Offer unavailable");
+        const data = await response.json();
+        if (!Number.isFinite(data.expiresAt))
+          throw new Error("Invalid deadline");
+        setRemaining(Math.max(0, data.expiresAt - Date.now()));
+        setOfferDeadline(new Date(data.expiresAt).toISOString());
+        setOfferVerified(true);
+      })
+      .catch((error) => {
+        if (error.name !== "AbortError") {
+          setOfferCheckFailed(true);
+          setError(
+            "Oferta nu a putut fi verificată. Reîncarcă pagina sau contactează-ne telefonic.",
+          );
+        }
+      });
+    return () => controller.abort();
+  }, [visitorOffer, ready]);
+  const [timerReady, setTimerReady] = useState(false);
   const [cancelled, setCancelled] = useState(false);
   useEffect(() => {
     const saved = sessionStorage.getItem("pp-variant");
@@ -48,18 +79,29 @@ export default function Storefront({
     );
   }, []);
   useEffect(() => {
-    const tick = () =>
-      setRemaining(Math.max(0, (activeDeadline(deadline) || 0) - Date.now()));
+    const tick = () => {
+      setRemaining(
+        Math.max(0, (activeDeadline(offerDeadline) || 0) - Date.now()),
+      );
+      setTimerReady(true);
+    };
     tick();
     const t = setInterval(tick, 1000);
     return () => clearInterval(t);
-  }, [deadline]);
+  }, [offerDeadline]);
+  const offerExpired =
+    timerReady && Number.isFinite(Date.parse(offerDeadline)) && remaining === 0;
   function choose(c: (typeof colors)[number]) {
     setSelected(c);
     sessionStorage.setItem("pp-variant", c.id);
     setError("");
   }
   async function checkout() {
+    if (offerCheckFailed || (visitorOffer && ready && !offerVerified)) return;
+    if (offerExpired) {
+      setError("Perioada acestei oferte s-a încheiat.");
+      return;
+    }
     if (!ready) {
       setError(
         "Pregătim deschiderea magazinului. Pentru detalii, sună-ne la 0755 436 284.",
@@ -147,19 +189,16 @@ export default function Storefront({
               <span className="little-line" /> CONFORTUL ÎNCEPE ACASĂ
             </span>
             <h1>
-              O nouă culoare.
-              <br />
-              Aceeași dorință de
-              <br />
-              <em>a rămâne în pat.</em>
+              Cele mai fine și confortabile <em>lenjerii de pat Pucioasa</em>
             </h1>
             <p>
-              Nuanțe care te reprezintă. Dungi discrete, care aduc armonie.
-              Descoperă lenjeria care face dormitorul să se simtă din nou al
-              tău.
+              Te-ai săturat de lenjeriile incomode, care nu oferă un somn
+              odihnitor? Te-ai săturat de calitatea slabă care se degradează
+              după câteva spălări? Comandă lenjeriile de pat Pucioasa din Damasc
+              Fine de la Pucioasa Premium și scapă de aceste probleme.
             </p>
             <a href="#produs" className="primary">
-              Alege culoarea ta <ArrowRight size={19} />
+              Alege culoarea și comandă <ArrowRight size={19} />
             </a>
             <a
               href="#produs"
@@ -171,7 +210,7 @@ export default function Storefront({
                   <i key={c.id} style={{ background: c.hex }} />
                 ))}
               </span>
-              <span>19 culori. Una pentru tine.</span>
+              <span>19 culori superbe.</span>
             </a>
           </div>
           <div className="hero-visual">
@@ -184,12 +223,12 @@ export default function Storefront({
             />
             <div className="image-label">
               <span>COLECȚIA PUCIOASA PREMIUM</span>
-              <strong>Frumos, până la ultimul detaliu.</strong>
+              <strong>Pentru că vrei un somn odihnitor.</strong>
             </div>
             <div className="hero-price">
               <small>SET COMPLET</small>
               <strong>
-                169 <span>lei</span>
+                {product.amount / 100} <span>lei</span>
               </strong>
               <span className="badge-rule" />
               <small>COLECȚIA ÎN DUNGI</small>
@@ -217,8 +256,7 @@ export default function Storefront({
                 </span>
               </div>
               <p className="gallery-note">
-                Fotografia corespunde variantei selectate. Nuanțele pot varia în
-                funcție de ecran.
+                Fotografia corespunde variantei selectate.
               </p>
               <div className="thumbnail-strip" aria-label="Fotografii variante">
                 {colors.map((c) => (
@@ -240,17 +278,28 @@ export default function Storefront({
             <div className="product-info">
               <span className="eyebrow">COLECȚIA ÎN DUNGI</span>
               <h2>
-                Un pat frumos.
-                <br />
-                <em>În culoarea ta.</em>
+                Lenjerii de pat <em>Pucioasa Premium.</em>
               </h2>
               <p className="product-description">
-                Alege nuanța preferată. Setul asortează cearșafurile și fețele
-                de pernă, pentru un dormitor armonios.
+                Alege nuanța preferată și bucură-te de un set complet.
               </p>
+              {discount && !offerExpired && (
+                <div className="discount-line">
+                  <span>
+                    Preț anterior{" "}
+                    <s>
+                      {new Intl.NumberFormat("ro-RO", {
+                        maximumFractionDigits: 2,
+                      }).format((discount.amount * quantity) / 100)}{" "}
+                      lei
+                    </s>
+                  </span>
+                  <strong>−{discount.percent}%</strong>
+                </div>
+              )}
               <div className="price-row">
                 <strong>
-                  {169 * quantity} <span>lei</span>
+                  {(product.amount / 100) * quantity} <span>lei</span>
                 </strong>
                 <span className="free-tag">
                   <Truck size={15} /> Transport gratuit
@@ -259,12 +308,12 @@ export default function Storefront({
               <p className="price-footnote">
                 {quantity === 1
                   ? "Prețul setului complet."
-                  : `${quantity} seturi × 169 lei`}
+                  : `${quantity} seturi × ${product.amount / 100} lei`}
               </p>
               <div className="divider" />
               <fieldset className="color-field">
                 <legend>
-                  Alege culoarea{" "}
+                  Alege culoarea preferată{" "}
                   <strong aria-live="polite">{selected.name}</strong>
                 </legend>
                 <div className="swatches">
@@ -307,7 +356,7 @@ export default function Storefront({
                   <span>
                     <Layers size={16} /> Ce conține setul
                   </span>
-                  <small>6 piese, asortate</small>
+                  <small>6 piese</small>
                 </div>
                 <dl className="included-grid">
                   {[
@@ -332,12 +381,52 @@ export default function Storefront({
 
               {remaining > 0 && (
                 <div className="offer">
-                  <Clock size={18} />
-                  <span>Comenzile pentru această ofertă se închid în</span>
-                  <strong>
-                    {hours}:{minutes}:{seconds}
-                  </strong>
+                  <div className="offer-message">
+                    <Clock size={18} />
+                    <span>
+                      <strong>
+                        {visitorOffer
+                          ? "Timp pentru a începe comanda"
+                          : "Oferta se încheie în"}
+                      </strong>
+                      <small>
+                        Până la{" "}
+                        {new Intl.DateTimeFormat("ro-RO", {
+                          timeZone: "Europe/Bucharest",
+                          day: "numeric",
+                          month: "short",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        }).format(new Date(offerDeadline))}
+                      </small>
+                    </span>
+                  </div>
+                  <div
+                    className="offer-clock"
+                    role="timer"
+                    aria-label={`${hours} ore, ${minutes} minute, ${seconds} secunde rămase`}
+                  >
+                    <span>
+                      <b>{hours}</b>
+                      <small>ore</small>
+                    </span>
+                    <i>:</i>
+                    <span>
+                      <b>{minutes}</b>
+                      <small>min</small>
+                    </span>
+                    <i>:</i>
+                    <span>
+                      <b>{seconds}</b>
+                      <small>sec</small>
+                    </span>
+                  </div>
                 </div>
+              )}
+              {offerExpired && (
+                <p className="offer-ended" role="status">
+                  Perioada acestei oferte s-a încheiat.
+                </p>
               )}
               <div className="purchase-label">Câte seturi îți dorești?</div>
               <div className="purchase-row">
@@ -360,10 +449,19 @@ export default function Storefront({
                 </div>
                 <button
                   className="primary buy"
-                  disabled={busy}
+                  disabled={
+                    busy ||
+                    offerExpired ||
+                    offerCheckFailed ||
+                    (visitorOffer && ready && !offerVerified)
+                  }
                   onClick={checkout}
                 >
-                  {busy ? "Se deschide plata…" : "Comandă acum"}
+                  {busy
+                    ? "Se deschide plata…"
+                    : offerExpired
+                      ? "Ofertă încheiată"
+                      : "Comandă acum"}
                   <ArrowRight size={18} />
                 </button>
               </div>
@@ -387,7 +485,7 @@ export default function Storefront({
               )}
               <div className="checkout-trust">
                 <ShieldCheck size={15} />
-                <span>Plată securizată prin Stripe</span>
+                <span>Plată securizată cu cardul</span>
                 <span className="payment-brand">VISA</span>
                 <span className="mastercard" aria-label="Mastercard">
                   <i />
@@ -395,9 +493,7 @@ export default function Storefront({
                 </span>
               </div>
               <div className="product-questions" id="intrebari">
-                <div className="questions-heading">
-                  Detalii pentru o alegere liniștită
-                </div>
+                <div className="questions-heading">Detalii comandă</div>
                 <details>
                   <summary>
                     <span>
@@ -405,10 +501,7 @@ export default function Storefront({
                     </span>
                     <Plus size={16} />
                   </summary>
-                  <p>
-                    Livrare în {delivery || "48 de ore"}, oriunde în România.
-                    Costul transportului este inclus în prețul afișat.
-                  </p>
+                  <p>Livrare gratuită în maxim 48 de ore prin curier rapid.</p>
                 </details>
                 <details>
                   <summary>
@@ -418,12 +511,7 @@ export default function Storefront({
                     <Plus size={16} />
                   </summary>
                   <p>
-                    {ready
-                      ? "Plătești"
-                      : "La deschiderea comenzilor, vei putea plăti"}{" "}
-                    cu cardul prin Stripe, fără să creezi un cont. Alegi
-                    culoarea și cantitatea, apoi completezi datele de livrare în
-                    pagina de plată.
+                    Plata se face securizat cu cardul, fără să creezi un cont.
                   </p>
                 </details>
                 <details>
@@ -434,12 +522,8 @@ export default function Storefront({
                     <Plus size={16} />
                   </summary>
                   <p>
-                    Consumatorii beneficiază în general de dreptul legal de
-                    retragere în 14 zile de la primire. Consultă{" "}
-                    <Link href="/informatii/livrare-retur">
-                      condițiile de retur
-                    </Link>{" "}
-                    și contactează-ne pentru instrucțiuni înainte de expediere.
+                    Consumatorii din România beneficiază în general de dreptul
+                    legal de retur în 14 zile de la primire.
                   </p>
                 </details>
                 <details>
@@ -451,15 +535,13 @@ export default function Storefront({
                   </summary>
                   <p>
                     Selectează o culoare pentru a vedea fotografia
-                    corespunzătoare. Denumirea aleasă apare deasupra paletei și
-                    se păstrează în comandă. Nuanțele pot varia ușor în funcție
-                    de ecran.
+                    corespunzătoare.
                   </p>
                 </details>
                 <a className="product-help" href="tel:+40755436284">
                   <Phone size={15} />
                   <span>
-                    Te ajutăm să alegi <strong>0755 436 284</strong>
+                    Comandă telefonic <strong>0755 436 284</strong>
                   </span>
                   <ArrowRight size={15} />
                 </a>
@@ -532,12 +614,12 @@ export default function Storefront({
         </div>
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} Pucioasa Premium</span>
-          <span>Plăți procesate prin Stripe</span>
+          <span>Plată securizată cu cardul</span>
         </div>
       </footer>
       <div className="mobile-buy">
         <div>
-          <strong>{169 * quantity} lei</strong>
+          <strong>{(product.amount / 100) * quantity} lei</strong>
           <small>
             {selected.name}
             {quantity > 1 ? ` · ${quantity} seturi` : ""}

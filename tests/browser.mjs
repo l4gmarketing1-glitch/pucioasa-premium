@@ -144,7 +144,7 @@ try {
     "true",
   );
   await page.getByRole("button", { name: "Mărește cantitatea" }).click();
-  assert.match(await page.locator(".price-row>strong").innerText(), /338/);
+  assert.match(await page.locator(".price-row>strong").innerText(), /298/);
   await page.locator(".buy").click();
   assert.match(await page.locator(".form-error").innerText(), /Pregătim/);
   await page.evaluate(() => sessionStorage.clear());

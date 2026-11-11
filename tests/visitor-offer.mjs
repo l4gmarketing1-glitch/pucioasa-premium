@@ -1,0 +1,32 @@
+import {chromium} from '@playwright/test';
+import {spawn} from 'node:child_process';
+import {randomBytes} from 'node:crypto';
+import assert from 'node:assert/strict';
+import {createOfferToken} from '../lib/offer-token.mjs';
+const origin='http://localhost:3102';
+const secret=randomBytes(32).toString('hex');
+const server=spawn('node',['node_modules/next/dist/bin/next','start','-p','3102'],{env:{...process.env,SITE_URL:origin,STORE_LIVE:'true',PRODUCT_CONFIRMED:'true',LEGAL_CONFIRMED:'true',STRIPE_SECRET_KEY:'sk_test_local_validation_only',BUSINESS_NAME:'Test fixture',BUSINESS_CUI:'test',BUSINESS_ADDRESS:'test',CONTACT_EMAIL:'test@example.invalid',DELIVERY_ESTIMATE:'48 de ore',RETURN_ADDRESS:'test',VISITOR_OFFER_ENABLED:'true',OFFER_SIGNING_SECRET:secret,OFFER_ENDS_AT:'',REFERENCE_PRICE_RON:''},stdio:'ignore'});
+let browser;
+try{
+ let ready=false;for(let i=0;i<60;i++){try{if((await fetch(origin)).ok){ready=true;break;}}catch{}await new Promise(r=>setTimeout(r,500));}assert.ok(ready);
+ const headers={Origin:origin};
+ const first=await fetch(origin+'/api/offer',{method:'POST',headers});assert.equal(first.status,200);
+ const data=await first.json();const setCookie=first.headers.get('set-cookie');assert.match(setCookie,/HttpOnly/i);assert.match(setCookie,/SameSite=lax/i);const cookie=setCookie.split(';')[0];
+ const repeated=await fetch(origin+'/api/offer',{method:'POST',headers:{...headers,Cookie:cookie}});assert.equal((await repeated.json()).expiresAt,data.expiresAt);assert.equal(repeated.headers.get('set-cookie'),null);
+ const expiredCookie='pp_offer_v1='+createOfferToken(secret,Date.now()-87*60000);
+ const expired=await fetch(origin+'/api/offer',{method:'POST',headers:{...headers,Cookie:expiredCookie}});assert.equal((await expired.json()).expired,true);assert.equal(expired.headers.get('set-cookie'),null);
+ const checkout=(cookie)=>fetch(origin+'/api/checkout',{method:'POST',headers:{...headers,'Content-Type':'application/json',...(cookie?{Cookie:cookie}:{})},body:JSON.stringify({color:'v01',quantity:1})});
+ assert.equal((await checkout()).status,403);
+ assert.equal((await checkout('pp_offer_v1=forged')).status,403);
+ assert.equal((await checkout(expiredCookie)).status,409);
+ browser=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox']});
+ const page=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});
+ await page.clock.install({time:new Date()});
+ await page.goto(origin,{waitUntil:'networkidle'});await page.getByRole('timer').waitFor({state:'visible'});
+ const saved=await page.context().cookies();const offer=saved.find(c=>c.name==='pp_offer_v1');assert.ok(offer);
+ await page.reload({waitUntil:'networkidle'});await page.getByRole('timer').waitFor({state:'visible'});
+ assert.equal((await page.context().cookies()).find(c=>c.name==='pp_offer_v1').value,offer.value);
+ await page.clock.fastForward(87*60000);assert.ok(await page.locator('.buy').isDisabled());
+ assert.match(await page.locator('.offer-ended').innerText(),/s-a încheiat/);
+ console.log('PASS: 86-minute signed offer, persisted expiry, rejected missing/tampered/expired offers, and browser expiry. No payment requests sent to Stripe.');
+}finally{await browser?.close();server.kill('SIGTERM');}
