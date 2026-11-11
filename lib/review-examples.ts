@@ -45,16 +45,25 @@ const demoNames = [
   "Viorica T.",
   "Sergiu P.",
 ];
-const demoTexts = [
-  "Exemplu de recenzie despre nuanța aleasă. Aici poate apărea o impresie despre potrivirea în dormitor.",
-  "Exemplu de mesaj scurt despre experiența de cumpărare.",
-  "Exemplu de recenzie despre conținutul setului și dimensiuni.",
-  "Exemplu de impresie după primirea comenzii. Textul real va aparține clientului.",
-  "Exemplu de mesaj despre detaliile preferate ale produsului.",
-  "Exemplu de recenzie despre folosirea lenjeriei. Clientul poate adăuga și o fotografie proprie.",
-  "Exemplu de observație despre ambalare și livrare.",
-  "Exemplu de recomandare pentru alegerea culorii. Recenzia autentică va fi publicată cu acordul autorului.",
+// Messages supplied by the store owner; author names and ratings are still illustrative.
+const suppliedReviewTexts = [
+  "Superbe recomand!",
+  "Am primit comanda și sunt foarte mulțumită de lenjeriile dumneavoastră.",
+  "Am primit comanda și sunt mulțumită de produse!",
+  "Am comandat lenjerii,super calitate,recomand!",
+  "Sunt cele mai bune lenjerii ,calitate super recomand!",
+  "Sînt cele mai bune lenjeri de calitate va recomand!",
+  "Vă mulțumesc! Super calitate.",
+  "Calitate 100%",
+  "Recomand cu toată încrederea!",
+  "Super calitative la super preț! Livrare promptă!",
+  "Recomand lenjeria ❤️",
+  "Recomand, am cumpărat și eu trei lengerii, f mulțumită, calitate!!!!",
+  "Cele mai bune lenjerii!",
+  "Recomand !",
+  "Sunt cele mai bune lenjerii !!! Calitate 100%.",
 ];
+let nextText = 0;
 export const reviewExamples: Review[] = Array.from(
   { length: 41 },
   (_, index) => {
@@ -63,7 +72,7 @@ export const reviewExamples: Review[] = Array.from(
       id: `demo-${index + 1}`,
       displayName: demoNames[index],
       rating: 5,
-      text: index % 4 === 1 ? "" : demoTexts[index % demoTexts.length],
+      text: index % 4 === 1 ? "" : (suppliedReviewTexts[nextText++] ?? ""),
       colorName: color.name,
       publishedAt: "2026-11-11",
       ...([0, 16, 32].includes(index)

@@ -51,9 +51,10 @@ export default function ReviewPreview() {
       </div>
       <p className="review-preview-note">
         Această pagină de previzualizare este protejată. Aceleași exemple apar
-        pe pagina principală cu mențiunea vizibilă că sunt demonstrative.
-        Numele, evaluările și textele sunt fictive. „Recenzie verificată” se
-        afișează doar pentru opinii autentice asociate unor comenzi reale.
+        pe pagina principală cu mențiunea vizibilă că sunt demonstrative. Numele
+        și evaluările sunt fictive. Cele 15 texte au fost furnizate de magazin.
+        „Recenzie verificată” se afișează doar pentru opinii autentice asociate
+        unor comenzi reale.
       </p>
     </main>
   );

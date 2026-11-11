@@ -249,8 +249,12 @@ try {
   assert.equal(await preview.locator('.review-stars[aria-label="Evaluare demonstrativă: 5 din 5 stele"]').count(),41);
   assert.equal(await preview.locator('.review-verified').count(),0);
   assert.equal(await preview.locator('.review-verification-demo').count(),0);
-  assert.equal(await preview.locator('.review-message').count(),31);
-  assert.equal(await preview.locator('.photo-review-card').filter({hasNot:preview.locator('.review-message')}).count(),10);
+  assert.equal(await preview.locator('.review-message').count(),15);
+  const messages = await preview.locator('.review-message').allTextContents();
+  assert.equal(new Set(messages).size, 15);
+  assert.equal(messages[0], 'Superbe recomand!');
+  assert.equal(messages[14], 'Sunt cele mai bune lenjerii !!! Calitate 100%.');
+  assert.equal(await preview.locator('.photo-review-card').filter({hasNot:preview.locator('.review-message')}).count(),26);
   assert.equal(await preview.getByRole('button',{name:/Încarcă mai multe recenzii/}).count(),0);
   await adminContext.close();
 
