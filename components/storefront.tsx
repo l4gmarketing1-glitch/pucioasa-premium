@@ -17,9 +17,18 @@ import {
   BedDouble,
   Layers,
 } from "lucide-react";
-import { colors, activeDeadline, product } from "@/lib/catalog.mjs";
+import {
+  colors as catalogColors,
+  activeDeadline,
+  product,
+} from "@/lib/catalog.mjs";
 import Reviews from "@/components/reviews";
 import ReviewRating from "@/components/review-rating";
+
+const colors = [
+  ...catalogColors.filter((color) => color.id === "v04"),
+  ...catalogColors.filter((color) => color.id !== "v04"),
+];
 
 export default function Storefront({
   ready,
@@ -505,9 +514,7 @@ export default function Storefront({
       <main id="main">
         <section className="hero">
           <div className="hero-copy">
-            <h1>
-              Cele mai fine și confortabile lenjerii de pat Pucioasa
-            </h1>
+            <h1>Cele mai fine și confortabile lenjerii de pat Pucioasa</h1>
             <p>
               Te-ai săturat de lenjeriile incomode, care nu oferă un somn
               odihnitor? Te-ai săturat de calitatea slabă care se degradează
@@ -523,7 +530,12 @@ export default function Storefront({
               aria-label="Descoperă cele 19 culori"
             >
               <span className="palette-dots">
-                {[colors[0], colors[2], colors[13], colors[14]].map((c) => (
+                {[
+                  catalogColors[0],
+                  catalogColors[2],
+                  catalogColors[13],
+                  catalogColors[14],
+                ].map((c) => (
                   <i key={c.id} style={{ background: c.hex }} />
                 ))}
               </span>

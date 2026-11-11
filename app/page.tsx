@@ -7,10 +7,10 @@ export const metadata = {
   openGraph: {
     images: [
       {
-        url: "/products/1.jpg",
+        url: "/products/4.jpg",
         width: 1540,
         height: 1427,
-        alt: "Lenjerie Pucioasa Premium, 6 piese",
+        alt: "Lenjerie Pucioasa Premium bej nisipiu, 6 piese",
       },
     ],
   },
@@ -22,7 +22,7 @@ export default function Home() {
     "@context": "https://schema.org",
     "@type": "Product",
     name: "Lenjerie de pat Pucioasa Premium — 6 piese",
-    image: [`${siteUrl}/products/1.jpg`],
+    image: [`${siteUrl}/products/4.jpg`],
     description:
       "Un cearșaf de pilotă, un cearșaf de pat și patru fețe de pernă.",
     brand: { "@type": "Brand", name: "Pucioasa Premium" },
@@ -51,7 +51,8 @@ export default function Home() {
       <Storefront
         visitorOffer={visitorOfferEnabled()}
         discount={referenceDiscount(
-          process.env.REFERENCE_PRICE_RON?.trim() || String(product.referenceAmount / 100),
+          process.env.REFERENCE_PRICE_RON?.trim() ||
+            String(product.referenceAmount / 100),
         )}
         ready={ready}
         deadline={process.env.OFFER_ENDS_AT || ""}

@@ -48,6 +48,13 @@ try {
   const primaryProduct = page.locator("#produs");
   const repeatProduct = page.locator("#comanda");
   assert.equal(await page.locator("h1").count(), 1);
+  for (const section of [primaryProduct, repeatProduct]) {
+    assert.equal(await section.locator('.photo-caption').innerText(), 'Bej nisipiu');
+    assert.equal(await section.locator('.swatch').first().getAttribute('aria-label'), 'Alege Bej nisipiu');
+    assert.equal(await section.locator('.swatch').first().getAttribute('aria-pressed'), 'true');
+    assert.equal(await section.locator('.thumb').first().getAttribute('aria-label'), 'Vezi Bej nisipiu');
+    assert.match(await section.locator('.product-photo img').getAttribute('src'), /(?:%2F|\/)4\.jpg/);
+  }
   await page.locator(".hero-visual img").evaluate(img => img.decode());
   assert.match(await page.locator(".hero-visual img").getAttribute("src"), /hero-lenjerie-visinie/);
   assert.equal(await page.locator(".photo-review-card").count(), 11);
