@@ -50,12 +50,11 @@ export default function ReviewPreview() {
         <ReviewsGallery entries={reviewExamples} demo />
       </div>
       <p className="review-preview-note">
-        Această pagină de previzualizare este protejată. Aceleași exemple apar
-        pe pagina principală cu mențiunea vizibilă că sunt demonstrative. Numele
-        abreviate și evaluările sunt fictive. Cele 15 nume complete și cele 15
-        texte au fost furnizate de magazin; asocierea dintre ele este
-        ilustrativă. „Recenzie verificată” se afișează doar pentru opinii
-        autentice asociate unor comenzi reale.
+        Această pagină de previzualizare este protejată. Cele 41 de nume și
+        textele au fost furnizate de magazin; nouă mesaje au fost asociate
+        explicit autorilor indicați. Evaluările în stele sunt demonstrative.
+        „Recenzie verificată” se afișează doar pentru opinii autentice asociate
+        unor comenzi reale.
       </p>
     </main>
   );

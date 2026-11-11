@@ -2,43 +2,43 @@ import { colors } from "@/lib/catalog.mjs";
 import type { Review } from "@/lib/reviews";
 
 // Illustrative data only. Render with the visible demo disclosure; never merge into genuine reviews.
-// Full names supplied by the owner; abbreviated names remain layout examples.
+// All 41 display names supplied by the owner; no invented names remain.
 const presentationNames = [
-  "Doru P.",
-  "Ilinca R.",
+  "Raluca",
+  "Mirela V.",
   "Marinela Proca",
-  "Vlad C.",
+  "Gina Tava",
   "Andreea Radu",
-  "Anca L.",
-  "Sorin M.",
+  "Paula Zamirca",
+  "Carmen Ioana Voicu",
   "Ileana Vicla",
-  "Radu T.",
-  "Oana S.",
-  "Teodora N.",
+  "Elena Lungu",
+  "Ioana Tancoc",
+  "Mihaela Dediu",
   "Olimpia Condrut",
-  "Diana F.",
-  "Cătălin B.",
-  "Mara D.",
+  "Nico Bîrsan",
+  "Mariana Lazarescu",
+  "Alexandra Chiper",
   "Jeni Visan",
-  "Lavinia C.",
-  "Mihnea R.",
-  "Ioana V.",
-  "Cosmin P.",
+  "Irina Lenuța",
+  "Florina Stoinea",
+  "Ana Balauca",
+  "Carmen Stoian",
   "Ardeleanu Gabriel",
-  "Andreea T.",
-  "Dragoș M.",
-  "Bianca N.",
+  "Anca Marin",
+  "Florina Taranu",
+  "Rodica Balas",
   "Petrosan Cristi",
-  "Lucian A.",
-  "Corina V.",
-  "Ștefan L.",
+  "Laura Andreea",
+  "Elena Rusitoru",
+  "Daniela Petre",
   "Stela Cernat",
-  "Alina D.",
-  "Sabina M.",
-  "Tudor C.",
+  "Anca Olaru",
+  "Ioana C.",
+  "Liliana V.",
   "Silvia Dicu",
-  "Raluca F.",
-  "Cristian N.",
+  "Daniela Lazar",
+  "Elena Marcut",
   "Ionelia Stoica",
   "Stan Irina",
   "Cornelia Dutescu",
@@ -64,16 +64,31 @@ const suppliedReviewTexts = [
   "Recomand !",
   "Sunt cele mai bune lenjerii !!! Calitate 100%.",
 ];
+// Explicit author/message pairings supplied by the store owner.
+const suppliedNamedTexts: Record<string, string> = {
+  "Mariana Lazarescu": "Superb ❤️",
+  "Alexandra Chiper": "Eu am dar pe crem! Și recomand!",
+  "Irina Lenuța": "Calitate superioara.",
+  "Florina Stoinea": "Recomand cu încredere tuturor!",
+  "Ana Balauca": "Superbă 🥰",
+  "Carmen Stoian": "Recomand cu drag!",
+  "Anca Marin": "Foarte frumoase, material de calitate. Si lucrate impecabil.",
+  "Florina Taranu": "Adorabile și de calitate ! Nu exista comparatie",
+  "Daniela Petre":
+    "Am comandat 5 lenjerii si chiar sunt frumoase si de calitate!",
+};
 let nextText = 0;
 export const reviewExamples: Review[] = Array.from(
   { length: 41 },
   (_, index) => {
     const color = colors[index % colors.length];
+    const previousText =
+      index % 4 === 1 ? "" : (suppliedReviewTexts[nextText++] ?? "");
     return {
       id: `demo-${index + 1}`,
       displayName: presentationNames[index],
       rating: 5,
-      text: index % 4 === 1 ? "" : (suppliedReviewTexts[nextText++] ?? ""),
+      text: suppliedNamedTexts[presentationNames[index]] ?? previousText,
       colorName: color.name,
       publishedAt: "2026-11-11",
       ...([0, 16, 32].includes(index)

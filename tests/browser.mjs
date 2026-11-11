@@ -214,7 +214,7 @@ try {
   assert.equal((await fetch(origin + "/admin")).status, 401);
   assert.equal((await fetch(origin + "/admin/recenzii-preview")).status,401);
   assert.equal(await page.locator('.review-demo-note').count(),1);
-  assert.match(await page.locator('.review-demo-note').innerText(), /evaluările sunt fictive/);
+  assert.match(await page.locator('.review-demo-note').innerText(), /Evaluările în stele sunt demonstrative/);
   assert.equal(await page.locator('.photo-review-card').count(),3);
   assert.ok(await page.evaluate(()=>Boolean(document.querySelector('.reviews-showcase').compareDocumentPosition(document.querySelector('.review-invitation')) & Node.DOCUMENT_POSITION_FOLLOWING)));
   await page.getByRole('button',{name:/Vezi mai multe recenzii/}).click();
@@ -227,7 +227,7 @@ try {
   const previewResponse=await preview.goto(origin+'/admin/recenzii-preview',{waitUntil:'networkidle'});
   assert.equal(previewResponse.status(),200);
   assert.match(previewResponse.headers()['x-robots-tag'],/noindex/);
-  assert.match(await preview.locator('.reviews-showcase .review-demo-note').innerText(),/evaluările sunt fictive/);
+  assert.match(await preview.locator('.reviews-showcase .review-demo-note').innerText(),/Evaluările în stele sunt demonstrative/);
   assert.equal(await preview.getByRole('link', {name: '41 recenzii, evaluare medie 5 din 5 stele'}).count(), 1);
   await preview.locator('.rating-design-preview').screenshot({path:'/tmp/pucioasa-badge-preview.png'});
   assert.equal(await preview.locator('.photo-review-card').count(),11);
@@ -258,12 +258,18 @@ try {
   assert.equal(await preview.locator('.review-stars[aria-label="Evaluare demonstrativă: 5 din 5 stele"]').count(),41);
   assert.equal(await preview.locator('.review-verified').count(),0);
   assert.equal(await preview.locator('.review-verification-demo').count(),0);
-  assert.equal(await preview.locator('.review-message').count(),15);
+  assert.equal(await preview.locator('.review-message').count(),20);
+
+  const expectedNamedMessages = {"Mariana Lazarescu": "Superb ❤️", "Alexandra Chiper": "Eu am dar pe crem! Și recomand!", "Irina Lenuța": "Calitate superioara.", "Florina Stoinea": "Recomand cu încredere tuturor!", "Ana Balauca": "Superbă 🥰", "Carmen Stoian": "Recomand cu drag!", "Anca Marin": "Foarte frumoase, material de calitate. Si lucrate impecabil.", "Florina Taranu": "Adorabile și de calitate ! Nu exista comparatie", "Daniela Petre": "Am comandat 5 lenjerii si chiar sunt frumoase si de calitate!"};
+  for (const [name, message] of Object.entries(expectedNamedMessages)) {
+    const card = preview.locator('.photo-review-card').filter({has: preview.getByText(name, {exact:true})});
+    assert.equal(await card.locator('.review-message').innerText(), message);
+  }
   const messages = await preview.locator('.review-message').allTextContents();
-  assert.equal(new Set(messages).size, 15);
+  assert.equal(new Set(messages).size, 20);
   assert.equal(messages[0], 'Superbe recomand!');
-  assert.equal(messages[14], 'Sunt cele mai bune lenjerii !!! Calitate 100%.');
-  assert.equal(await preview.locator('.photo-review-card').filter({hasNot:preview.locator('.review-message')}).count(),26);
+
+  assert.equal(await preview.locator('.photo-review-card').filter({hasNot:preview.locator('.review-message')}).count(),21);
   assert.equal(await preview.getByRole('button',{name:/Vezi mai multe recenzii/}).count(),0);
   await adminContext.close();
 
