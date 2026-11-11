@@ -10,24 +10,59 @@ export const metadata = {
 };
 
 // Server-only fixtures for the protected admin preview. Never imported into the public review collection.
-const sampleText = [
-  "Exemplu de prezentare: o impresie despre culoarea aleasă și felul în care se potrivește în dormitor.",
-  "Exemplu de prezentare: aici poate apărea povestea unui client despre prima comandă și experiența de livrare.",
-  "Exemplu de prezentare: o părere despre dimensiunile setului, însoțită de fotografia trimisă de client.",
-  "Exemplu de prezentare: un mesaj scurt despre detaliile preferate ale lenjeriei.",
-  "Exemplu de prezentare: o recenzie mai detaliată despre folosirea și întreținerea produsului, publicată cu acordul autorului.",
-  "Exemplu de prezentare: aici poate apărea un sfat util pentru cineva care alege prima sa nuanță.",
+const demoNames = [
+  "Doru P.",
+  "Ilinca R.",
+  "Adelina Munteanu",
+  "Vlad C.",
+  "Cezara Dima",
+  "Anca L.",
+  "Sorin M.",
+  "Irina Pavel",
+  "Radu T.",
+  "Oana S.",
+  "Teodora N.",
+  "Rareș Banu",
+  "Diana F.",
+  "Cătălin B.",
+  "Mara D.",
+  "Anamaria Dobre",
+  "Lavinia C.",
+  "Mihnea R.",
+  "Ioana V.",
+  "Cosmin P.",
+  "Nicoleta Sava",
+  "Andreea T.",
+  "Dragoș M.",
+  "Bianca N.",
+  "Miruna Dinu",
+  "Lucian A.",
+  "Corina V.",
+  "Ștefan L.",
+  "Iulia Rusu",
+  "Alina D.",
+  "Sabina M.",
+  "Tudor C.",
+  "Simona Vasile",
+  "Raluca F.",
+  "Cristian N.",
+  "Daria S.",
+  "Roxana Petrescu",
+  "Florin R.",
+  "Camelia B.",
+  "Viorica T.",
+  "Sergiu P.",
 ];
 const examples: Review[] = Array.from({ length: 41 }, (_, index) => {
   const color = colors[index % colors.length];
   return {
     id: `demo-${index + 1}`,
-    displayName: `Exemplu ${String(index + 1).padStart(2, "0")}`,
-    rating: index % 4 === 0 ? 4 : 5,
-    text: sampleText[index % sampleText.length],
+    displayName: demoNames[index],
+    rating: 5,
+    text: "Exemplu demonstrativ de evaluare, fără opinie de client.",
     colorName: color.name,
     publishedAt: "2026-11-11",
-    ...(index % 3 !== 1
+    ...([0, 16, 32].includes(index)
       ? {
           image: {
             src: color.image,
@@ -48,8 +83,10 @@ export default function ReviewPreview() {
       <ReviewsGallery entries={examples} demo />
       <p className="review-preview-note">
         Pagina este protejată de autentificarea administratorului. Exemplele nu
-        apar în magazinul public. Insigna „Recenzie verificată” este disponibilă
-        doar pentru recenzii autentice asociate unei comenzi verificate.
+        apar în magazinul public. Numele sunt fictive, iar insignele sunt
+        marcate DEMO. În magazin, „Recenzie verificată” se afișează doar pentru
+        opinii autentice asociate unei comenzi verificate; evaluările originale
+        se păstrează.
       </p>
     </main>
   );

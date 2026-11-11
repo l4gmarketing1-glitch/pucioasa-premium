@@ -188,6 +188,7 @@ try {
   assert.equal((await fetch(origin + "/admin/recenzii-preview")).status,401);
   assert.equal(await page.locator('.review-demo-banner').count(),0);
   assert.equal(await page.locator('.review-demo-label').count(),0);
+  assert.equal(await page.locator('.review-verification-demo').count(),0);
   const adminContext=await browser.newContext({httpCredentials:{username:'admin',password},viewport:{width:1440,height:1000},reducedMotion:'reduce'});
   const preview=await adminContext.newPage();
   const previewResponse=await preview.goto(origin+'/admin/recenzii-preview',{waitUntil:'networkidle'});
@@ -198,11 +199,23 @@ try {
   assert.equal(await preview.locator('.review-verified').count(),0);
   await preview.screenshot({path:'/tmp/pucioasa-demo-recenzii.png',fullPage:true});
   await preview.setViewportSize({width:390,height:844});
+  await preview.waitForFunction(()=>document.querySelectorAll('.photo-review-card').length===3);
   assert.ok(await preview.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
   await preview.screenshot({path:'/tmp/pucioasa-demo-recenzii-mobil.png',fullPage:true});
-  for(let batch=0;batch<6;batch++) await preview.getByRole('button',{name:/Vezi încă/}).click();
+  await preview.getByRole('button',{name:/Încarcă mai multe recenzii/}).click();
+  assert.equal(await preview.locator('.photo-review-card').count(),6);
+  await preview.setViewportSize({width:1440,height:1000});
+  await preview.getByRole('button',{name:/Încarcă mai multe recenzii/}).click();
+  assert.equal(await preview.locator('.photo-review-card').count(),12);
+  await preview.setViewportSize({width:390,height:844});
+  assert.equal(await preview.locator('.photo-review-card').count(),12);
+  for(let batch=0;batch<10;batch++) await preview.getByRole('button',{name:/Încarcă mai multe recenzii/}).click();
   assert.equal(await preview.locator('.photo-review-card').count(),41);
-  assert.equal(await preview.getByRole('button',{name:/Vezi încă/}).count(),0);
+  assert.equal(await preview.locator('.review-photo').count(),3);
+  assert.equal(await preview.locator('.review-stars[aria-label="Evaluare demonstrativă: 5 din 5 stele"]').count(),41);
+  assert.equal(await preview.locator('.review-verified').count(),0);
+  assert.equal(await preview.locator('.review-verification-demo').count(),41);
+  assert.equal(await preview.getByRole('button',{name:/Încarcă mai multe recenzii/}).count(),0);
   await adminContext.close();
 
   assert.equal(

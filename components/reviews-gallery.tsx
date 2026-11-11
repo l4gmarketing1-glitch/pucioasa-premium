@@ -1,9 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import Image from "next/image";
-import { ArrowDown, BadgeCheck, Quote, Star } from "lucide-react";
+import { ArrowDown, BadgeCheck, Star } from "lucide-react";
 import type { Review } from "@/lib/reviews";
+
+const mobileQuery = "(max-width: 760px)";
+function subscribeViewport(onChange: () => void) {
+  const query = window.matchMedia(mobileQuery);
+  query.addEventListener("change", onChange);
+  return () => query.removeEventListener("change", onChange);
+}
+const mobileSnapshot = () => window.matchMedia(mobileQuery).matches;
+const serverSnapshot = () => true;
 
 export default function ReviewsGallery({
   entries,
@@ -12,7 +21,17 @@ export default function ReviewsGallery({
   entries: Review[];
   demo?: boolean;
 }) {
-  const [visibleCount, setVisibleCount] = useState(6);
+  const mobile = useSyncExternalStore(
+    subscribeViewport,
+    mobileSnapshot,
+    serverSnapshot,
+  );
+  const pageSize = mobile ? 3 : 6;
+  const [expandedCount, setExpandedCount] = useState<number | null>(null);
+  const visibleCount = Math.min(
+    entries.length,
+    Math.max(pageSize, expandedCount ?? pageSize),
+  );
   if (!entries.length) return null;
   const average = (
     entries.reduce((sum, entry) => sum + entry.rating, 0) / entries.length
@@ -26,7 +45,8 @@ export default function ReviewsGallery({
           <strong>PREVIZUALIZARE PRIVATĂ · DATE DEMONSTRATIVE</strong>
           <span>
             Aceste {entries.length} exemple nu reprezintă opinii ale clienților.
-            Imaginile sunt fotografii de produs.
+            Numele sunt exemple fictive, iar insignele sunt modele vizuale. Cele
+            3 imagini sunt fotografii de produs.
           </span>
         </p>
       )}
@@ -101,8 +121,12 @@ export default function ReviewsGallery({
                   ))}
                 </div>
                 {demo ? (
-                  <span className="review-demo-label">
-                    Exemplu demonstrativ
+                  <span
+                    className="review-verification-demo"
+                    title="Exemplu vizual; nu reprezintă o achiziție verificată"
+                  >
+                    <BadgeCheck size={13} />
+                    <small>DEMO</small> Recenzie verificată
                   </span>
                 ) : (
                   entry.verification?.method === "manual_order_match" && (
@@ -113,38 +137,8 @@ export default function ReviewsGallery({
                   )
                 )}
               </div>
-              {!entry.image && (
-                <Quote
-                  className="review-card-quote"
-                  size={31}
-                  strokeWidth={1}
-                  aria-hidden="true"
-                />
-              )}
-              <blockquote>{entry.text}</blockquote>
-              <div className="review-color">
-                <i />
-                {entry.colorName}
-              </div>
               <div className="review-author">
-                <span className="review-initial">
-                  {demo ? "D" : entry.displayName.charAt(0)}
-                </span>
-                <div>
-                  <strong>{entry.displayName}</strong>
-                  <small>
-                    {demo
-                      ? "Profil demonstrativ"
-                      : new Date(entry.publishedAt).toLocaleDateString(
-                          "ro-RO",
-                          {
-                            timeZone: "Europe/Bucharest",
-                            month: "long",
-                            year: "numeric",
-                          },
-                        )}
-                  </small>
-                </div>
+                <strong>{entry.displayName}</strong>
               </div>
             </div>
           </article>
@@ -154,11 +148,10 @@ export default function ReviewsGallery({
         <button
           className="reviews-more"
           onClick={() =>
-            setVisibleCount((count) => Math.min(count + 6, entries.length))
+            setExpandedCount(Math.min(visibleCount + pageSize, entries.length))
           }
         >
-          Vezi încă {Math.min(6, entries.length - visibleCount)}{" "}
-          {demo ? "exemple" : "recenzii"}
+          Încarcă mai multe recenzii
           <ArrowDown size={16} />
           <span>
             {visibleCount} / {entries.length}
