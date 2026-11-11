@@ -37,8 +37,9 @@ export default function ReviewsGallery({
     <div className={`reviews-showcase${demo ? " reviews-showcase-demo" : ""}`}>
       {demo && (
         <p className="review-demo-note">
-          Exemple de prezentare — numele și evaluările sunt fictive. Textele au
-          fost furnizate de magazin.
+          Exemple de prezentare — numele abreviate și evaluările sunt fictive.
+          Numele complete și textele au fost furnizate de magazin; asocierea
+          dintre ele este ilustrativă.
         </p>
       )}
       <div className="showcase-header">
