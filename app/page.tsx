@@ -56,7 +56,6 @@ export default function Home() {
         ready={ready}
         deadline={process.env.OFFER_ENDS_AT || ""}
         delivery={process.env.DELIVERY_ESTIMATE || ""}
-        material={process.env.PRODUCT_MATERIAL || product.material}
       />
     </>
   );

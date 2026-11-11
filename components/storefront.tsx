@@ -24,7 +24,6 @@ export default function Storefront({
   ready,
   deadline,
   delivery,
-  material,
   discount,
   visitorOffer,
 }: {
@@ -32,7 +31,6 @@ export default function Storefront({
   visitorOffer: boolean;
   deadline: string;
   delivery: string;
-  material: string;
   discount: { amount: number; percent: number } | null;
 }) {
   const [selected, setSelected] = useState(colors[0]);
@@ -231,7 +229,7 @@ export default function Storefront({
                 {product.amount / 100} <span>lei</span>
               </strong>
               <span className="badge-rule" />
-              <small>COLECȚIA ÎN DUNGI</small>
+              <small>COLECȚIA PREMIUM</small>
             </div>
           </div>
         </section>
@@ -276,10 +274,8 @@ export default function Storefront({
               </div>
             </div>
             <div className="product-info">
-              <span className="eyebrow">COLECȚIA ÎN DUNGI</span>
-              <h2>
-                Lenjerii de pat <em>Pucioasa Premium.</em>
-              </h2>
+              <span className="eyebrow">COLECȚIA PREMIUM</span>
+              <h2>Lenjerii de pat Pucioasa Premium</h2>
               <p className="product-description">
                 Alege nuanța preferată și bucură-te de un set complet.
               </p>
@@ -374,9 +370,6 @@ export default function Storefront({
                     </div>
                   ))}
                 </dl>
-                {material && (
-                  <p className="included-material">Material: {material}</p>
-                )}
               </div>
 
               {remaining > 0 && (

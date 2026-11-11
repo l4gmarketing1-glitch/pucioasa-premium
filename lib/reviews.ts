@@ -7,6 +7,9 @@ export type Review = {
   text: string;
   colorName: string;
   publishedAt: string;
+  // Set only after matching the genuine submission to a real purchase.
+  verification?: { method: "manual_order_match"; verifiedAt: string };
+  image?: { src: string; alt: string; kind: "customer" | "product" };
 };
 
 export const reviews: Review[] = [];

@@ -67,3 +67,9 @@ To enable the genuine visitor window, set `VISITOR_OFFER_ENABLED=true` and a cry
 This limits the time to **start** an online order. A checkout already opened in time may be completed on Stripe until that session expires. The mechanism does not reserve physical stock, does not claim scarcity, and cannot identify an anonymous visitor after they remove cookies or use another browser. The cookie lasts up to one year to retain the campaign's expiry. Keep the signing key stable; rotating it invalidates existing offers. A later campaign needs an intentional cookie/version migration rather than automatically resetting the deadline.
 
 Checks: `node tests/promotion.mjs` tests the optional reference price and absolute deadline; `node tests/visitor-offer.mjs` tests the signed visitor window using isolated fixture settings and no Stripe payment requests.
+
+## Photo review presentation and private preview
+
+The public review gallery appears above the “Confortul se simte” heading only when genuine records exist in `lib/reviews.ts`. Records may include an image (`kind: customer` or `product`); product photographs are explicitly identified. Add a `verification` record only after matching the real submission to a genuine order. The public badge “Recenzie verificată” requires that record. Publish customer photographs only with permission.
+
+`/admin/recenzii-preview` is protected by the existing admin authentication and excluded from indexing. It contains 41 clearly labeled synthetic layout examples, uses product photography, and does not show verified-purchase badges. The examples are server-side fixtures belonging exclusively to this preview and are never imported into the public review data. The gallery initially displays six cards and expands six at a time.

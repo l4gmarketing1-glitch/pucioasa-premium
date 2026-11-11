@@ -3,18 +3,13 @@
 import { useRef, useState, type FormEvent } from "react";
 import { ArrowRight, Check, Heart, Mail, Quote, Star, X } from "lucide-react";
 import { reviews } from "@/lib/reviews";
+import ReviewsGallery from "@/components/reviews-gallery";
 
 export default function Reviews() {
   const dialog = useRef<HTMLDialogElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const [rating, setRating] = useState(0);
   const [prepared, setPrepared] = useState("");
-  const average = reviews.length
-    ? (
-        reviews.reduce((total, review) => total + review.rating, 0) /
-        reviews.length
-      ).toFixed(1)
-    : null;
 
   function openReview() {
     setPrepared("");
@@ -44,6 +39,7 @@ export default function Reviews() {
       id="recenzii"
       aria-labelledby="reviews-title"
     >
+      {reviews.length > 0 && <ReviewsGallery entries={reviews} />}
       <div className="reviews-intro">
         <span className="eyebrow">
           <span className="little-line" /> RECENZIILE CLIENȚILOR
@@ -62,60 +58,6 @@ export default function Reviews() {
 
       {reviews.length > 0 ? (
         <>
-          <div className="reviews-summary">
-            <strong>{average}</strong>
-            <span>
-              din 5 · {reviews.length}{" "}
-              {reviews.length === 1
-                ? "recenzie publicată"
-                : "recenzii publicate"}
-            </span>
-          </div>
-          <div className="review-grid">
-            {reviews.map((review) => (
-              <article className="review-card" key={review.id}>
-                <div
-                  className="review-stars"
-                  aria-label={`${review.rating} din 5 stele`}
-                >
-                  {Array.from({ length: review.rating }, (_, index) => (
-                    <Star
-                      key={index}
-                      size={14}
-                      fill="currentColor"
-                      aria-hidden="true"
-                    />
-                  ))}
-                </div>
-                <Quote
-                  className="review-quote"
-                  size={30}
-                  strokeWidth={1}
-                  aria-hidden="true"
-                />
-                <blockquote>{review.text}</blockquote>
-                <div className="review-author">
-                  <span className="review-initial">
-                    {review.displayName.charAt(0)}
-                  </span>
-                  <div>
-                    <strong>{review.displayName}</strong>
-                    <small>
-                      {review.colorName} ·{" "}
-                      {new Date(review.publishedAt).toLocaleDateString(
-                        "ro-RO",
-                        {
-                          timeZone: "Europe/Bucharest",
-                          month: "long",
-                          year: "numeric",
-                        },
-                      )}
-                    </small>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
           <button ref={trigger} className="review-write" onClick={openReview}>
             Împărtășește experiența ta <ArrowRight size={16} />
           </button>
