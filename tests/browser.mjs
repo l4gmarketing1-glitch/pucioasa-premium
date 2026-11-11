@@ -214,7 +214,9 @@ try {
   assert.equal(await preview.locator('.review-photo').count(),3);
   assert.equal(await preview.locator('.review-stars[aria-label="Evaluare demonstrativă: 5 din 5 stele"]').count(),41);
   assert.equal(await preview.locator('.review-verified').count(),0);
-  assert.equal(await preview.locator('.review-verification-demo').count(),41);
+  assert.equal(await preview.locator('.review-verification-demo').count(),0);
+  assert.equal(await preview.locator('.review-message').count(),31);
+  assert.equal(await preview.locator('.photo-review-card').filter({hasNot:preview.locator('.review-message')}).count(),10);
   assert.equal(await preview.getByRole('button',{name:/Încarcă mai multe recenzii/}).count(),0);
   await adminContext.close();
 

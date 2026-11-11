@@ -45,8 +45,8 @@ export default function ReviewsGallery({
           <strong>PREVIZUALIZARE PRIVATĂ · DATE DEMONSTRATIVE</strong>
           <span>
             Aceste {entries.length} exemple nu reprezintă opinii ale clienților.
-            Numele sunt exemple fictive, iar insignele sunt modele vizuale. Cele
-            3 imagini sunt fotografii de produs.
+            Numele, evaluările și textele sunt exemple fictive. Cele 3 imagini
+            sunt fotografii de produs.
           </span>
         </p>
       )}
@@ -120,23 +120,17 @@ export default function ReviewsGallery({
                     />
                   ))}
                 </div>
-                {demo ? (
-                  <span
-                    className="review-verification-demo"
-                    title="Exemplu vizual; nu reprezintă o achiziție verificată"
-                  >
-                    <BadgeCheck size={13} />
-                    <small>DEMO</small> Recenzie verificată
-                  </span>
-                ) : (
+                {!demo &&
                   entry.verification?.method === "manual_order_match" && (
                     <span className="review-verified">
                       <BadgeCheck size={13} />
                       Recenzie verificată
                     </span>
-                  )
-                )}
+                  )}
               </div>
+              {entry.text.trim() && (
+                <blockquote className="review-message">{entry.text}</blockquote>
+              )}
               <div className="review-author">
                 <strong>{entry.displayName}</strong>
               </div>

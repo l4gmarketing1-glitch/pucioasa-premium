@@ -2960,3 +2960,5 @@ footer {
     font-size: 21px;
   }
 }
+.photo-review-card .review-message{font-family:Georgia,serif;font-size:18px;line-height:1.55;letter-spacing:-.15px;margin:2px 0 20px;color:#57483f;white-space:pre-wrap;flex:none}
+@media(max-width:760px){.photo-review-card .review-message{font-size:17px;line-height:1.6}}

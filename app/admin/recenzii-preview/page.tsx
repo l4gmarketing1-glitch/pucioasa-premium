@@ -53,13 +53,23 @@ const demoNames = [
   "Viorica T.",
   "Sergiu P.",
 ];
+const demoTexts = [
+  "Exemplu de recenzie despre nuanța aleasă. Aici poate apărea o impresie despre potrivirea în dormitor.",
+  "Exemplu de mesaj scurt despre experiența de cumpărare.",
+  "Exemplu de recenzie despre conținutul setului și dimensiuni.",
+  "Exemplu de impresie după primirea comenzii. Textul real va aparține clientului.",
+  "Exemplu de mesaj despre detaliile preferate ale produsului.",
+  "Exemplu de recenzie despre folosirea lenjeriei. Clientul poate adăuga și o fotografie proprie.",
+  "Exemplu de observație despre ambalare și livrare.",
+  "Exemplu de recomandare pentru alegerea culorii. Recenzia autentică va fi publicată cu acordul autorului.",
+];
 const examples: Review[] = Array.from({ length: 41 }, (_, index) => {
   const color = colors[index % colors.length];
   return {
     id: `demo-${index + 1}`,
     displayName: demoNames[index],
     rating: 5,
-    text: "Exemplu demonstrativ de evaluare, fără opinie de client.",
+    text: index % 4 === 1 ? "" : demoTexts[index % demoTexts.length],
     colorName: color.name,
     publishedAt: "2026-11-11",
     ...([0, 16, 32].includes(index)
@@ -83,10 +93,9 @@ export default function ReviewPreview() {
       <ReviewsGallery entries={examples} demo />
       <p className="review-preview-note">
         Pagina este protejată de autentificarea administratorului. Exemplele nu
-        apar în magazinul public. Numele sunt fictive, iar insignele sunt
-        marcate DEMO. În magazin, „Recenzie verificată” se afișează doar pentru
-        opinii autentice asociate unei comenzi verificate; evaluările originale
-        se păstrează.
+        apar în magazinul public. Numele, evaluările și textele sunt fictive. În
+        magazin, „Recenzie verificată” se afișează doar pentru opinii autentice
+        asociate unei comenzi verificate; evaluările originale se păstrează.
       </p>
     </main>
   );
