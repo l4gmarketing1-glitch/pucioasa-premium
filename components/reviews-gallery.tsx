@@ -42,9 +42,7 @@ export default function ReviewsGallery({
       )}
       <div className="showcase-header">
         <div>
-          <span className="eyebrow">
-            {demo ? "PROPUNERE DE PREZENTARE" : "EXPERIENȚE DE ACASĂ"}
-          </span>
+          {!demo && <span className="eyebrow">EXPERIENȚE DE ACASĂ</span>}
           <h2>
             {demo ? "Un loc pentru" : "Păreri care fac"}
             <br />

@@ -133,10 +133,12 @@ export default function Storefront({
       id={compact ? "comanda" : "produs"}
       aria-labelledby={compact ? "comanda-title" : "produs-title"}
     >
-      <div className="product-heading">
-        <span className="eyebrow">ALEGE CE ȚI SE POTRIVEȘTE</span>
-        <p>O culoare nouă. Un sentiment familiar.</p>
-      </div>
+      {!compact && (
+        <div className="product-heading">
+          <span className="eyebrow">ALEGE CE ȚI SE POTRIVEȘTE</span>
+          <p>O culoare nouă. Un sentiment familiar.</p>
+        </div>
+      )}
       <div className="product-grid">
         <div className="gallery">
           <div className="product-photo">
