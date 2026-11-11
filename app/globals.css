@@ -2897,8 +2897,8 @@ footer {
 }
 .photo-review-card .review-card-top {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
+  align-items: center;
   gap: 10px;
   margin-bottom: 14px;
 }
@@ -2930,6 +2930,19 @@ footer {
   gap: 5px;
   font-size: 9px;
   color: #60735a;
+}
+.photo-review-card .review-verified {
+  padding: 5px 8px;
+  border: 1px solid #dce5d7;
+  border-radius: 999px;
+  background: #f2f6ef;
+  color: #426139;
+  font-size: 10px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.photo-review-card .review-verified svg {
+  flex-shrink: 0;
 }
 .review-verification-demo small {
   font-size: 7px;
