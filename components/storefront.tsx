@@ -457,7 +457,7 @@ export default function Storefront({
       <div className="announcement">
         <Truck size={15} />
         <span>
-          Un plus de confort.{" "}
+          Un plus de încredere.{" "}
           <strong>Transport gratuit la orice comandă.</strong>
         </span>
         <span className="announcement-right">
@@ -491,7 +491,7 @@ export default function Storefront({
         </nav>
         <a href="tel:+40755436284" className="header-phone">
           <Phone size={17} />
-          <span>Suntem aici pentru tine</span>
+          <span>0755 436 284</span>
         </a>
         <button
           className="menu-button"
@@ -506,7 +506,7 @@ export default function Storefront({
         <section className="hero">
           <div className="hero-copy">
             <h1>
-              Cele mai fine și confortabile <em>lenjerii de pat Pucioasa</em>
+              Cele mai fine și confortabile lenjerii de pat Pucioasa
             </h1>
             <p>
               Te-ai săturat de lenjeriile incomode, care nu oferă un somn
@@ -540,7 +540,7 @@ export default function Storefront({
             />
             <div className="image-label">
               <span>COLECȚIA PUCIOASA PREMIUM</span>
-              <strong>Pentru că vrei un somn odihnitor.</strong>
+              <strong>Pentru un somn liniștit.</strong>
             </div>
             <div className="hero-price">
               <small>SET COMPLET</small>
