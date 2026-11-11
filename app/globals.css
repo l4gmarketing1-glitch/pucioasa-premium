@@ -178,6 +178,10 @@ h2 em {
   font-size: clamp(40px, 4.2vw, 67px);
   margin: 24px 0;
 }
+.hero-title-accent {
+  color: var(--wine);
+  font-style: normal;
+}
 .hero-copy > p {
   max-width: 350px;
   font-size: 14px;

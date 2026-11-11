@@ -514,7 +514,10 @@ export default function Storefront({
       <main id="main">
         <section className="hero">
           <div className="hero-copy">
-            <h1>Cele mai fine și confortabile lenjerii de pat Pucioasa</h1>
+            <h1>
+              Cele mai fine și confortabile{" "}
+              <span className="hero-title-accent">lenjerii de pat Pucioasa</span>
+            </h1>
             <p>
               Te-ai săturat de lenjeriile incomode, care nu oferă un somn
               odihnitor? Te-ai săturat de calitatea slabă care se degradează
