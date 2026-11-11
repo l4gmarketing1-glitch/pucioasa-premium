@@ -532,8 +532,8 @@ export default function Storefront({
           </div>
           <div className="hero-visual">
             <Image
-              src="/products/1.jpg"
-              alt="Lenjerie de pat roz pal din colecția Pucioasa Premium"
+              src="/images/hero-lenjerie-visinie.jpg"
+              alt="Pat cu lenjerie vișinie într-un dormitor luminos"
               fill
               priority
               sizes="(max-width: 760px) 100vw, 55vw"

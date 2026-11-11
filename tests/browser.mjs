@@ -48,6 +48,8 @@ try {
   const primaryProduct = page.locator("#produs");
   const repeatProduct = page.locator("#comanda");
   assert.equal(await page.locator("h1").count(), 1);
+  await page.locator(".hero-visual img").evaluate(img => img.decode());
+  assert.match(await page.locator(".hero-visual img").getAttribute("src"), /hero-lenjerie-visinie/);
   assert.equal(await page.locator(".photo-review-card").count(), 11);
   assert.equal(await page.locator(".hero .eyebrow").count(), 0);
   assert.equal(await page.locator(".editorial").count(), 0);
@@ -177,6 +179,7 @@ try {
   await page.reload({ waitUntil: "networkidle" });
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: "/tmp/pucioasa-desktop.png", fullPage: true });
+  await page.locator(".hero").screenshot({path:"/tmp/pucioasa-hero-desktop.png"});
   for (const width of [390, 320]) {
     await page.setViewportSize({ width, height: 844 });
     assert.ok(
@@ -204,6 +207,7 @@ try {
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.locator(".mobile-buy .primary").waitFor({ state: "visible" });
   await page.screenshot({ path: "/tmp/pucioasa-mobile.png", fullPage: false });
+  await page.locator(".hero-visual").screenshot({path:"/tmp/pucioasa-hero-mobile.png",style:".mobile-buy {visibility:hidden;}"});
   await page
     .locator("#produs .product-info")
     .screenshot({
@@ -213,8 +217,8 @@ try {
   await repeatProduct.screenshot({ path: "/tmp/pucioasa-comanda-mobil.png", style: ".mobile-buy { visibility: hidden; }" });
   assert.equal((await fetch(origin + "/admin")).status, 401);
   assert.equal((await fetch(origin + "/admin/recenzii-preview")).status,401);
-  assert.equal(await page.locator('.review-demo-note').count(),1);
-  assert.match(await page.locator('.review-demo-note').innerText(), /Evaluările în stele sunt demonstrative/);
+  assert.equal(await page.locator('.review-demo-note').count(),0);
+  assert.equal(await page.getByRole('link',{name:'41 recenzii, evaluare medie 5 din 5 stele'}).count(),2);
   assert.equal(await page.locator('.photo-review-card').count(),3);
   assert.ok(await page.evaluate(()=>Boolean(document.querySelector('.reviews-showcase').compareDocumentPosition(document.querySelector('.review-invitation')) & Node.DOCUMENT_POSITION_FOLLOWING)));
   await page.getByRole('button',{name:/Vezi mai multe recenzii/}).click();
@@ -227,7 +231,7 @@ try {
   const previewResponse=await preview.goto(origin+'/admin/recenzii-preview',{waitUntil:'networkidle'});
   assert.equal(previewResponse.status(),200);
   assert.match(previewResponse.headers()['x-robots-tag'],/noindex/);
-  assert.match(await preview.locator('.reviews-showcase .review-demo-note').innerText(),/Evaluările în stele sunt demonstrative/);
+  assert.equal(await preview.locator('.review-demo-note').count(),0);
   assert.equal(await preview.getByRole('link', {name: '41 recenzii, evaluare medie 5 din 5 stele'}).count(), 1);
   await preview.locator('.rating-design-preview').screenshot({path:'/tmp/pucioasa-badge-preview.png'});
   assert.equal(await preview.locator('.photo-review-card').count(),11);
@@ -255,7 +259,7 @@ try {
   for(let batch=0;batch<7;batch++) await preview.getByRole('button',{name:/Vezi mai multe recenzii/}).click();
   assert.equal(await preview.locator('.photo-review-card').count(),41);
   assert.equal(await preview.locator('.review-photo').count(),3);
-  assert.equal(await preview.locator('.review-stars[aria-label="Evaluare demonstrativă: 5 din 5 stele"]').count(),41);
+  assert.equal(await preview.locator('.review-stars[aria-label="5 din 5 stele"]').count(),41);
   assert.equal(await preview.locator('.review-verified').count(),0);
   assert.equal(await preview.locator('.review-verification-demo').count(),0);
   assert.equal(await preview.locator('.review-message').count(),20);

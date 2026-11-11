@@ -3,7 +3,6 @@
 import { useRef, useState, type FormEvent } from "react";
 import { ArrowRight, Check, Heart, Mail, Quote, Star, X } from "lucide-react";
 import { reviews } from "@/lib/reviews";
-import { reviewExamples } from "@/lib/review-examples";
 import ReviewsGallery from "@/components/reviews-gallery";
 
 export default function Reviews() {
@@ -40,51 +39,38 @@ export default function Reviews() {
       id="recenzii"
       aria-label="Păreri și feedback"
     >
-      {reviews.length > 0 ? (
-        <ReviewsGallery entries={reviews} />
-      ) : (
-        <ReviewsGallery entries={reviewExamples} demo />
-      )}
-      {reviews.length > 0 ? (
-        <>
-          <button ref={trigger} className="review-write" onClick={openReview}>
-            Împărtășește experiența ta <ArrowRight size={16} />
-          </button>
-        </>
-      ) : (
-        <div className="review-invitation">
-          <div className="review-art" aria-hidden="true">
-            <div className="review-art-ring" />
-            <Quote size={54} strokeWidth={0.8} />
-            <span>
-              Momente mici.
-              <br />
-              <em>Impresii care contează.</em>
-            </span>
-            <Heart size={22} strokeWidth={1} />
-          </div>
-          <div className="review-invitation-copy">
-            <span className="eyebrow">PRIMA POVESTE POATE FI A TA</span>
-            <h3>
-              Cum se simte
-              <br />
-              <em>acasă, în noua culoare?</em>
-            </h3>
-            <p>
-              Încă nu au fost publicate recenzii. Dacă ai încercat lenjeria
-              noastră, povestește-ne despre alegerea ta. Părerea ta îi poate
-              ajuta și pe ceilalți să o găsească pe a lor.
-            </p>
-            <button ref={trigger} className="primary" onClick={openReview}>
-              Scrie o recenzie <ArrowRight size={17} />
-            </button>
-            <small>
-              <Mail size={13} /> Ne trimiți părerea prin email. O publicăm după
-              verificare.
-            </small>
-          </div>
+      <ReviewsGallery entries={reviews} />
+      <div className="review-invitation">
+        <div className="review-art" aria-hidden="true">
+          <div className="review-art-ring" />
+          <Quote size={54} strokeWidth={0.8} />
+          <span>
+            Momente mici.
+            <br />
+            <em>Impresii care contează.</em>
+          </span>
+          <Heart size={22} strokeWidth={1} />
         </div>
-      )}
+        <div className="review-invitation-copy">
+          <span className="eyebrow">POVESTEA TA CONTEAZĂ</span>
+          <h3>
+            Cum se simte
+            <br />
+            <em>acasă, în noua culoare?</em>
+          </h3>
+          <p>
+            Dacă ai încercat lenjeria noastră, povestește-ne despre alegerea ta.
+            Părerea ta îi poate ajuta și pe ceilalți să o găsească pe a lor.
+          </p>
+          <button ref={trigger} className="primary" onClick={openReview}>
+            Scrie o recenzie <ArrowRight size={17} />
+          </button>
+          <small>
+            <Mail size={13} /> Ne trimiți părerea prin email. O publicăm după
+            verificare.
+          </small>
+        </div>
+      </div>
 
       <dialog
         ref={dialog}
