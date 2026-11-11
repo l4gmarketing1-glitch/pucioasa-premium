@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { colors, activeDeadline, product } from "@/lib/catalog.mjs";
 import Reviews from "@/components/reviews";
+import ReviewRating from "@/components/review-rating";
 
 export default function Storefront({
   ready,
@@ -173,7 +174,7 @@ export default function Storefront({
           </div>
         </div>
         <div className="product-info">
-          <span className="eyebrow">COLECȚIA PREMIUM</span>
+          <ReviewRating />
           <h2 id={compact ? "comanda-title" : "produs-title"}>
             Lenjerii de pat Pucioasa Premium
           </h2>
