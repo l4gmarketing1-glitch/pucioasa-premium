@@ -1,13 +1,17 @@
 import { Star } from "lucide-react";
-import { reviews } from "@/lib/reviews";
+import { reviews, type Review } from "@/lib/reviews";
 
-export default function ReviewRating() {
-  if (!reviews.length) {
+export default function ReviewRating({
+  entries = reviews,
+}: {
+  entries?: Review[];
+}) {
+  if (!entries.length) {
     return <span className="eyebrow">COLECȚIA PREMIUM</span>;
   }
 
   const average =
-    reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length;
+    entries.reduce((sum, review) => sum + review.rating, 0) / entries.length;
   const score = new Intl.NumberFormat("ro-RO", {
     maximumFractionDigits: 1,
   }).format(average);
@@ -16,7 +20,7 @@ export default function ReviewRating() {
     <a
       className="product-review-rating"
       href="#recenzii"
-      aria-label={`${reviews.length} recenzii, evaluare medie ${score} din 5 stele`}
+      aria-label={`${entries.length} recenzii, evaluare medie ${score} din 5 stele`}
     >
       <span className="product-rating-stars" aria-hidden="true">
         {Array.from({ length: 5 }, (_, index) => (
@@ -33,7 +37,7 @@ export default function ReviewRating() {
         ))}
       </span>
       <span>
-        {reviews.length} {reviews.length === 1 ? "recenzie" : "recenzii"}
+        {entries.length} {entries.length === 1 ? "recenzie" : "recenzii"}
       </span>
     </a>
   );

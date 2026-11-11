@@ -2985,3 +2985,6 @@ footer {
 .product-rating-star { position: relative; display: flex; width: 15px; height: 15px; }
 .product-rating-star > span { position: absolute; inset: 0 auto 0 0; overflow: hidden; }
 .product-rating-star svg { display: block; flex-shrink: 0; max-width: none; }
+.rating-design-preview { max-width: 560px; margin: 32px auto 64px; }
+.rating-design-preview .product-info { padding: 32px; }
+@media (max-width: 760px) { .rating-design-preview .product-info { padding: 22px; } }

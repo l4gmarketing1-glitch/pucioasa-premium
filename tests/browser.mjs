@@ -226,7 +226,9 @@ try {
   const previewResponse=await preview.goto(origin+'/admin/recenzii-preview',{waitUntil:'networkidle'});
   assert.equal(previewResponse.status(),200);
   assert.match(previewResponse.headers()['x-robots-tag'],/noindex/);
-  assert.match(await preview.locator('.review-demo-note').innerText(),/evaluările sunt fictive/);
+  assert.match(await preview.locator('.reviews-showcase .review-demo-note').innerText(),/evaluările sunt fictive/);
+  assert.equal(await preview.getByRole('link', {name: '41 recenzii, evaluare medie 5 din 5 stele'}).count(), 1);
+  await preview.locator('.rating-design-preview').screenshot({path:'/tmp/pucioasa-badge-preview.png'});
   assert.equal(await preview.locator('.photo-review-card').count(),6);
   assert.equal(await preview.locator('.review-verified').count(),0);
   await preview.screenshot({path:'/tmp/pucioasa-demo-recenzii.png',fullPage:true});
