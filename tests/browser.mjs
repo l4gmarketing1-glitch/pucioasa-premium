@@ -45,8 +45,24 @@ try {
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto(origin, { waitUntil: "networkidle" });
+  const primaryProduct = page.locator("#produs");
+  const repeatProduct = page.locator("#comanda");
   assert.equal(await page.locator("h1").count(), 1);
-  assert.equal(await page.locator(".swatch").count(), 19);
+  assert.equal(await page.locator(".hero .eyebrow").count(), 0);
+  assert.equal(await page.locator(".editorial").count(), 0);
+  assert.equal(await repeatProduct.locator(".swatch").count(), 19);
+  assert.equal(await repeatProduct.locator(".product-questions").count(), 0);
+  assert.equal(await repeatProduct.locator(".checkout-trust").count(), 1);
+  assert.equal(await repeatProduct.getByRole("link", { name: /Comandă telefonic/ }).getAttribute("href"), "tel:+40755436284");
+  assert.ok(await page.evaluate(() => {
+    const sections = [...document.querySelector('main').children];
+    return sections[0].classList.contains('hero') && sections[1].id === 'produs' && sections[2].id === 'recenzii' && sections[3].id === 'comanda';
+  }));
+  assert.deepEqual(await page.evaluate(() => {
+    const ids = [...document.querySelectorAll('[id]')].map(el => el.id);
+    return ids.filter((id, i) => ids.indexOf(id) !== i);
+  }), []);
+  assert.equal(await primaryProduct.locator(".swatch").count(), 19);
   assert.equal(await page.locator(".benefits").count(), 0);
   assert.equal(
     await page.locator("#produs #detalii .included-grid>div").count(),
@@ -123,30 +139,39 @@ try {
   );
   await page.getByText("Livrare & transport", { exact: true }).click();
   for (let n = 1; n <= 19; n++) {
-    await page
+    await primaryProduct
       .getByRole("button", { name: `Alege ${colors[n - 1].name}`, exact: true })
       .click();
-    await page.locator(".product-photo img").evaluate((img) => img.decode());
+    await primaryProduct.locator(".product-photo img").evaluate((img) => img.decode());
     assert.equal(
-      await page.locator(".photo-caption").innerText(),
+      await primaryProduct.locator(".photo-caption").innerText(),
       colors[n - 1].name,
     );
     assert.match(
-      await page.locator(".product-photo img").getAttribute("src"),
+      await primaryProduct.locator(".product-photo img").getAttribute("src"),
       new RegExp(`(?:%2F|/)${n}\\.jpg`),
     );
   }
   await page.reload({ waitUntil: "networkidle" });
   assert.equal(
-    await page
+    await primaryProduct
       .getByRole("button", { name: "Alege Gri antracit", exact: true })
       .getAttribute("aria-pressed"),
     "true",
   );
-  await page.getByRole("button", { name: "Mărește cantitatea" }).click();
-  assert.match(await page.locator(".price-row>strong").innerText(), /298/);
-  await page.locator(".buy").click();
-  assert.match(await page.locator(".form-error").innerText(), /Pregătim/);
+  await primaryProduct.getByRole("button", { name: "Mărește cantitatea" }).click();
+  assert.match(await primaryProduct.locator(".price-row>strong").innerText(), /298/);
+  await primaryProduct.locator(".buy").click();
+  assert.match(await primaryProduct.locator(".form-error").innerText(), /Pregătim/);
+  assert.match(await repeatProduct.locator(".price-row>strong").innerText(), /298/);
+  assert.equal(await repeatProduct.locator(".photo-caption").innerText(), "Gri antracit");
+  await repeatProduct.getByRole("button", { name: "Alege Verde mentă", exact: true }).click();
+  assert.equal(await primaryProduct.locator(".photo-caption").innerText(), "Verde mentă");
+  await repeatProduct.getByRole("button", { name: "Mărește cantitatea" }).click();
+  assert.match(await primaryProduct.locator(".price-row>strong").innerText(), /447/);
+  await repeatProduct.locator(".buy").click();
+  assert.match(await repeatProduct.locator(".form-error").innerText(), /Pregătim/);
+  await repeatProduct.screenshot({ path: "/tmp/pucioasa-comanda-desktop.png" });
   await page.evaluate(() => sessionStorage.clear());
   await page.reload({ waitUntil: "networkidle" });
   await page.evaluate(() => window.scrollTo(0, 0));
@@ -179,11 +204,12 @@ try {
   await page.locator(".mobile-buy .primary").waitFor({ state: "visible" });
   await page.screenshot({ path: "/tmp/pucioasa-mobile.png", fullPage: false });
   await page
-    .locator(".product-info")
+    .locator("#produs .product-info")
     .screenshot({
       path: "/tmp/pucioasa-selectie-mobil.png",
       style: ".mobile-buy { visibility: hidden; }",
     });
+  await repeatProduct.screenshot({ path: "/tmp/pucioasa-comanda-mobil.png", style: ".mobile-buy { visibility: hidden; }" });
   assert.equal((await fetch(origin + "/admin")).status, 401);
   assert.equal((await fetch(origin + "/admin/recenzii-preview")).status,401);
   assert.equal(await page.locator('.review-demo-note').count(),1);

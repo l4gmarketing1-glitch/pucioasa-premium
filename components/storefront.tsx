@@ -127,6 +127,325 @@ export default function Storefront({
   const hours = String(Math.floor(remaining / 3600000)).padStart(2, "0"),
     minutes = String(Math.floor(remaining / 60000) % 60).padStart(2, "0"),
     seconds = String(Math.floor(remaining / 1000) % 60).padStart(2, "0");
+  const renderProductSection = (compact = false) => (
+    <section
+      className="product-section section"
+      id={compact ? "comanda" : "produs"}
+      aria-labelledby={compact ? "comanda-title" : "produs-title"}
+    >
+      <div className="product-heading">
+        <span className="eyebrow">ALEGE CE ȚI SE POTRIVEȘTE</span>
+        <p>O culoare nouă. Un sentiment familiar.</p>
+      </div>
+      <div className="product-grid">
+        <div className="gallery">
+          <div className="product-photo">
+            <Image
+              key={selected.id}
+              src={selected.image}
+              alt={`Lenjerie de pat 6 piese — ${selected.name}`}
+              fill
+              sizes="(max-width: 760px) 100vw, 52vw"
+            />
+            <span className="photo-caption">
+              <i style={{ backgroundColor: selected.hex }} />
+              {selected.name}
+            </span>
+          </div>
+          <p className="gallery-note">
+            Fotografia corespunde variantei selectate.
+          </p>
+          <div className="thumbnail-strip" aria-label="Fotografii variante">
+            {colors.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => choose(c)}
+                title={c.name}
+                aria-label={`Vezi ${c.name}`}
+                aria-pressed={selected.id === c.id}
+                className={selected.id === c.id ? "thumb selected" : "thumb"}
+              >
+                <Image src={c.image} alt="" width={74} height={70} />
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="product-info">
+          <span className="eyebrow">COLECȚIA PREMIUM</span>
+          <h2 id={compact ? "comanda-title" : "produs-title"}>
+            Lenjerii de pat Pucioasa Premium
+          </h2>
+          <p className="product-description">
+            Alege nuanța preferată și bucură-te de un set complet.
+          </p>
+          {discount && !offerExpired && (
+            <div className="discount-line">
+              <span>
+                Preț anterior{" "}
+                <s>
+                  {new Intl.NumberFormat("ro-RO", {
+                    maximumFractionDigits: 2,
+                  }).format((discount.amount * quantity) / 100)}{" "}
+                  lei
+                </s>
+              </span>
+              <strong>−{discount.percent}%</strong>
+            </div>
+          )}
+          <div className="price-row">
+            <strong>
+              {(product.amount / 100) * quantity} <span>lei</span>
+            </strong>
+            <span className="free-tag">
+              <Truck size={15} /> Transport gratuit
+            </span>
+          </div>
+          <p className="price-footnote">
+            {quantity === 1
+              ? "Prețul setului complet."
+              : `${quantity} seturi × ${product.amount / 100} lei`}
+          </p>
+          <div className="divider" />
+          <fieldset className="color-field">
+            <legend>
+              Alege culoarea preferată{" "}
+              <strong aria-live="polite">{selected.name}</strong>
+            </legend>
+            <div className="swatches">
+              {colors.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => choose(c)}
+                  title={c.name}
+                  aria-label={`Alege ${c.name}`}
+                  aria-pressed={selected.id === c.id}
+                  className={
+                    selected.id === c.id ? "swatch selected" : "swatch"
+                  }
+                  style={{ backgroundColor: c.hex }}
+                >
+                  {selected.id === c.id && (
+                    <Check
+                      size={17}
+                      color={
+                        [
+                          "v03",
+                          "v06",
+                          "v07",
+                          "v08",
+                          "v16",
+                          "v17",
+                          "v19",
+                        ].includes(c.id)
+                          ? "#fff"
+                          : "#4c242c"
+                      }
+                    />
+                  )}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+          <div
+            className="set-included"
+            id={compact ? "comanda-detalii" : "detalii"}
+          >
+            <div className="set-heading">
+              <span>
+                <Layers size={16} /> Ce conține setul
+              </span>
+              <small>6 piese</small>
+            </div>
+            <dl className="included-grid">
+              {[
+                ["Cearșaf de pilotă", "200 × 230 cm", "1×"],
+                ["Cearșaf de pat", "180 × 200 cm", "1×"],
+                ["Fețe de pernă", "70 × 70 cm", "2×"],
+                ["Fețe de pernă", "50 × 70 cm", "2×"],
+              ].map(([name, size, count]) => (
+                <div key={name + size}>
+                  <span className="included-count">{count}</span>
+                  <div>
+                    <dt>{name}</dt>
+                    <dd>{size}</dd>
+                  </div>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          {remaining > 0 && (
+            <div className="offer">
+              <div className="offer-message">
+                <Clock size={18} />
+                <span>
+                  <strong>
+                    {visitorOffer
+                      ? "Timp pentru a începe comanda"
+                      : "Oferta se încheie în"}
+                  </strong>
+                  <small>
+                    Până la{" "}
+                    {new Intl.DateTimeFormat("ro-RO", {
+                      timeZone: "Europe/Bucharest",
+                      day: "numeric",
+                      month: "short",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }).format(new Date(offerDeadline))}
+                  </small>
+                </span>
+              </div>
+              <div
+                className="offer-clock"
+                role="timer"
+                aria-label={`${hours} ore, ${minutes} minute, ${seconds} secunde rămase`}
+              >
+                <span>
+                  <b>{hours}</b>
+                  <small>ore</small>
+                </span>
+                <i>:</i>
+                <span>
+                  <b>{minutes}</b>
+                  <small>min</small>
+                </span>
+                <i>:</i>
+                <span>
+                  <b>{seconds}</b>
+                  <small>sec</small>
+                </span>
+              </div>
+            </div>
+          )}
+          {offerExpired && (
+            <p className="offer-ended" role="status">
+              Perioada acestei oferte s-a încheiat.
+            </p>
+          )}
+          <div className="purchase-label">Câte seturi îți dorești?</div>
+          <div className="purchase-row">
+            <div className="quantity">
+              <button
+                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                disabled={quantity === 1}
+                aria-label="Scade cantitatea"
+              >
+                <Minus size={16} />
+              </button>
+              <output aria-label="Cantitate">{quantity}</output>
+              <button
+                onClick={() => setQuantity((q) => Math.min(5, q + 1))}
+                disabled={quantity === 5}
+                aria-label="Mărește cantitatea"
+              >
+                <Plus size={16} />
+              </button>
+            </div>
+            <button
+              className="primary buy"
+              disabled={
+                busy ||
+                offerExpired ||
+                offerCheckFailed ||
+                (visitorOffer && ready && !offerVerified)
+              }
+              onClick={checkout}
+            >
+              {busy
+                ? "Se deschide plata…"
+                : offerExpired
+                  ? "Ofertă încheiată"
+                  : "Comandă acum"}
+              <ArrowRight size={18} />
+            </button>
+          </div>
+          <div aria-live="polite">
+            {error && (
+              <p className="form-error" role="alert">
+                {error}
+              </p>
+            )}
+            {cancelled && (
+              <p className="notice">
+                Ai revenit de la plată. Poți verifica selecția și relua comanda.
+              </p>
+            )}
+          </div>
+          {!ready && (
+            <p className="launch-note">
+              În curând disponibil pentru comandă online.
+            </p>
+          )}
+          <div className="checkout-trust">
+            <ShieldCheck size={15} />
+            <span>Plată securizată cu cardul</span>
+            <span className="payment-brand">VISA</span>
+            <span className="mastercard" aria-label="Mastercard">
+              <i />
+              <i />
+            </span>
+          </div>
+          {!compact && (
+            <div className="product-questions" id="intrebari">
+              <div className="questions-heading">Detalii comandă</div>
+              <details>
+                <summary>
+                  <span>
+                    <Truck size={17} /> Livrare & transport
+                  </span>
+                  <Plus size={16} />
+                </summary>
+                <p>Livrare gratuită în maxim 48 de ore prin curier rapid.</p>
+              </details>
+              <details>
+                <summary>
+                  <span>
+                    <ShieldCheck size={17} /> Cum plătesc?
+                  </span>
+                  <Plus size={16} />
+                </summary>
+                <p>
+                  Plata se face securizat cu cardul, fără să creezi un cont.
+                </p>
+              </details>
+              <details>
+                <summary>
+                  <span>
+                    <Package size={17} /> Dacă vreau să returnez?
+                  </span>
+                  <Plus size={16} />
+                </summary>
+                <p>
+                  Consumatorii din România beneficiază în general de dreptul
+                  legal de retur în 14 zile de la primire.
+                </p>
+              </details>
+              <details>
+                <summary>
+                  <span>
+                    <BedDouble size={17} /> Cum aleg nuanța potrivită?
+                  </span>
+                  <Plus size={16} />
+                </summary>
+                <p>
+                  Selectează o culoare pentru a vedea fotografia
+                  corespunzătoare.
+                </p>
+              </details>
+            </div>
+          )}
+          <a className="product-help" href="tel:+40755436284">
+            <Phone size={15} />
+            <span>
+              Comandă telefonic <strong>0755 436 284</strong>
+            </span>
+            <ArrowRight size={15} />
+          </a>
+        </div>
+      </div>
+    </section>
+  );
   return (
     <>
       <a className="skip" href="#main">
@@ -183,9 +502,6 @@ export default function Storefront({
       <main id="main">
         <section className="hero">
           <div className="hero-copy">
-            <span className="eyebrow">
-              <span className="little-line" /> CONFORTUL ÎNCEPE ACASĂ
-            </span>
             <h1>
               Cele mai fine și confortabile <em>lenjerii de pat Pucioasa</em>
             </h1>
@@ -233,345 +549,9 @@ export default function Storefront({
             </div>
           </div>
         </section>
-        <section className="product-section section" id="produs">
-          <div className="product-heading">
-            <span className="eyebrow">ALEGE CE ȚI SE POTRIVEȘTE</span>
-            <p>O culoare nouă. Un sentiment familiar.</p>
-          </div>
-          <div className="product-grid">
-            <div className="gallery">
-              <div className="product-photo">
-                <Image
-                  key={selected.id}
-                  src={selected.image}
-                  alt={`Lenjerie de pat 6 piese — ${selected.name}`}
-                  fill
-                  sizes="(max-width: 760px) 100vw, 52vw"
-                />
-                <span className="photo-caption">
-                  <i style={{ backgroundColor: selected.hex }} />
-                  {selected.name}
-                </span>
-              </div>
-              <p className="gallery-note">
-                Fotografia corespunde variantei selectate.
-              </p>
-              <div className="thumbnail-strip" aria-label="Fotografii variante">
-                {colors.map((c) => (
-                  <button
-                    key={c.id}
-                    onClick={() => choose(c)}
-                    title={c.name}
-                    aria-label={`Vezi ${c.name}`}
-                    aria-pressed={selected.id === c.id}
-                    className={
-                      selected.id === c.id ? "thumb selected" : "thumb"
-                    }
-                  >
-                    <Image src={c.image} alt="" width={74} height={70} />
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="product-info">
-              <span className="eyebrow">COLECȚIA PREMIUM</span>
-              <h2>Lenjerii de pat Pucioasa Premium</h2>
-              <p className="product-description">
-                Alege nuanța preferată și bucură-te de un set complet.
-              </p>
-              {discount && !offerExpired && (
-                <div className="discount-line">
-                  <span>
-                    Preț anterior{" "}
-                    <s>
-                      {new Intl.NumberFormat("ro-RO", {
-                        maximumFractionDigits: 2,
-                      }).format((discount.amount * quantity) / 100)}{" "}
-                      lei
-                    </s>
-                  </span>
-                  <strong>−{discount.percent}%</strong>
-                </div>
-              )}
-              <div className="price-row">
-                <strong>
-                  {(product.amount / 100) * quantity} <span>lei</span>
-                </strong>
-                <span className="free-tag">
-                  <Truck size={15} /> Transport gratuit
-                </span>
-              </div>
-              <p className="price-footnote">
-                {quantity === 1
-                  ? "Prețul setului complet."
-                  : `${quantity} seturi × ${product.amount / 100} lei`}
-              </p>
-              <div className="divider" />
-              <fieldset className="color-field">
-                <legend>
-                  Alege culoarea preferată{" "}
-                  <strong aria-live="polite">{selected.name}</strong>
-                </legend>
-                <div className="swatches">
-                  {colors.map((c) => (
-                    <button
-                      key={c.id}
-                      onClick={() => choose(c)}
-                      title={c.name}
-                      aria-label={`Alege ${c.name}`}
-                      aria-pressed={selected.id === c.id}
-                      className={
-                        selected.id === c.id ? "swatch selected" : "swatch"
-                      }
-                      style={{ backgroundColor: c.hex }}
-                    >
-                      {selected.id === c.id && (
-                        <Check
-                          size={17}
-                          color={
-                            [
-                              "v03",
-                              "v06",
-                              "v07",
-                              "v08",
-                              "v16",
-                              "v17",
-                              "v19",
-                            ].includes(c.id)
-                              ? "#fff"
-                              : "#4c242c"
-                          }
-                        />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </fieldset>
-              <div className="set-included" id="detalii">
-                <div className="set-heading">
-                  <span>
-                    <Layers size={16} /> Ce conține setul
-                  </span>
-                  <small>6 piese</small>
-                </div>
-                <dl className="included-grid">
-                  {[
-                    ["Cearșaf de pilotă", "200 × 230 cm", "1×"],
-                    ["Cearșaf de pat", "180 × 200 cm", "1×"],
-                    ["Fețe de pernă", "70 × 70 cm", "2×"],
-                    ["Fețe de pernă", "50 × 70 cm", "2×"],
-                  ].map(([name, size, count]) => (
-                    <div key={name + size}>
-                      <span className="included-count">{count}</span>
-                      <div>
-                        <dt>{name}</dt>
-                        <dd>{size}</dd>
-                      </div>
-                    </div>
-                  ))}
-                </dl>
-              </div>
-
-              {remaining > 0 && (
-                <div className="offer">
-                  <div className="offer-message">
-                    <Clock size={18} />
-                    <span>
-                      <strong>
-                        {visitorOffer
-                          ? "Timp pentru a începe comanda"
-                          : "Oferta se încheie în"}
-                      </strong>
-                      <small>
-                        Până la{" "}
-                        {new Intl.DateTimeFormat("ro-RO", {
-                          timeZone: "Europe/Bucharest",
-                          day: "numeric",
-                          month: "short",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        }).format(new Date(offerDeadline))}
-                      </small>
-                    </span>
-                  </div>
-                  <div
-                    className="offer-clock"
-                    role="timer"
-                    aria-label={`${hours} ore, ${minutes} minute, ${seconds} secunde rămase`}
-                  >
-                    <span>
-                      <b>{hours}</b>
-                      <small>ore</small>
-                    </span>
-                    <i>:</i>
-                    <span>
-                      <b>{minutes}</b>
-                      <small>min</small>
-                    </span>
-                    <i>:</i>
-                    <span>
-                      <b>{seconds}</b>
-                      <small>sec</small>
-                    </span>
-                  </div>
-                </div>
-              )}
-              {offerExpired && (
-                <p className="offer-ended" role="status">
-                  Perioada acestei oferte s-a încheiat.
-                </p>
-              )}
-              <div className="purchase-label">Câte seturi îți dorești?</div>
-              <div className="purchase-row">
-                <div className="quantity">
-                  <button
-                    onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    disabled={quantity === 1}
-                    aria-label="Scade cantitatea"
-                  >
-                    <Minus size={16} />
-                  </button>
-                  <output aria-label="Cantitate">{quantity}</output>
-                  <button
-                    onClick={() => setQuantity((q) => Math.min(5, q + 1))}
-                    disabled={quantity === 5}
-                    aria-label="Mărește cantitatea"
-                  >
-                    <Plus size={16} />
-                  </button>
-                </div>
-                <button
-                  className="primary buy"
-                  disabled={
-                    busy ||
-                    offerExpired ||
-                    offerCheckFailed ||
-                    (visitorOffer && ready && !offerVerified)
-                  }
-                  onClick={checkout}
-                >
-                  {busy
-                    ? "Se deschide plata…"
-                    : offerExpired
-                      ? "Ofertă încheiată"
-                      : "Comandă acum"}
-                  <ArrowRight size={18} />
-                </button>
-              </div>
-              <div aria-live="polite">
-                {error && (
-                  <p className="form-error" role="alert">
-                    {error}
-                  </p>
-                )}
-                {cancelled && (
-                  <p className="notice">
-                    Ai revenit de la plată. Poți verifica selecția și relua
-                    comanda.
-                  </p>
-                )}
-              </div>
-              {!ready && (
-                <p className="launch-note">
-                  În curând disponibil pentru comandă online.
-                </p>
-              )}
-              <div className="checkout-trust">
-                <ShieldCheck size={15} />
-                <span>Plată securizată cu cardul</span>
-                <span className="payment-brand">VISA</span>
-                <span className="mastercard" aria-label="Mastercard">
-                  <i />
-                  <i />
-                </span>
-              </div>
-              <div className="product-questions" id="intrebari">
-                <div className="questions-heading">Detalii comandă</div>
-                <details>
-                  <summary>
-                    <span>
-                      <Truck size={17} /> Livrare & transport
-                    </span>
-                    <Plus size={16} />
-                  </summary>
-                  <p>Livrare gratuită în maxim 48 de ore prin curier rapid.</p>
-                </details>
-                <details>
-                  <summary>
-                    <span>
-                      <ShieldCheck size={17} /> Cum plătesc?
-                    </span>
-                    <Plus size={16} />
-                  </summary>
-                  <p>
-                    Plata se face securizat cu cardul, fără să creezi un cont.
-                  </p>
-                </details>
-                <details>
-                  <summary>
-                    <span>
-                      <Package size={17} /> Dacă vreau să returnez?
-                    </span>
-                    <Plus size={16} />
-                  </summary>
-                  <p>
-                    Consumatorii din România beneficiază în general de dreptul
-                    legal de retur în 14 zile de la primire.
-                  </p>
-                </details>
-                <details>
-                  <summary>
-                    <span>
-                      <BedDouble size={17} /> Cum aleg nuanța potrivită?
-                    </span>
-                    <Plus size={16} />
-                  </summary>
-                  <p>
-                    Selectează o culoare pentru a vedea fotografia
-                    corespunzătoare.
-                  </p>
-                </details>
-                <a className="product-help" href="tel:+40755436284">
-                  <Phone size={15} />
-                  <span>
-                    Comandă telefonic <strong>0755 436 284</strong>
-                  </span>
-                  <ArrowRight size={15} />
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
+        {renderProductSection()}
         <Reviews />
-        <section className="editorial">
-          <div className="editorial-image">
-            <Image
-              src="/products/3.jpg"
-              alt="Lenjerie de pat vișinie cu dungi discrete"
-              fill
-              sizes="(max-width: 760px) 100vw, 50vw"
-            />
-          </div>
-          <div className="editorial-copy">
-            <span className="eyebrow">UN MIC RITUAL, ÎN FIECARE SEARĂ</span>
-            <h2>
-              Închide ziua.
-              <br />
-              <em>
-                Deschide ușa
-                <br />
-                către confort.
-              </em>
-            </h2>
-            <p>
-              Uneori, tot ce îți trebuie este o schimbare simplă. Culoarea care
-              îți place. Un pat frumos aranjat. Un moment doar pentru tine.
-            </p>
-            <a href="#produs" className="text-link">
-              Găsește-ți nuanța <ArrowRight size={17} />
-            </a>
-          </div>
-        </section>
+        {renderProductSection(true)}
       </main>
       <footer>
         <div className="footer-main">
