@@ -2962,3 +2962,6 @@ footer {
 }
 .photo-review-card .review-message{font-family:Georgia,serif;font-size:18px;line-height:1.55;letter-spacing:-.15px;margin:2px 0 20px;color:#57483f;white-space:pre-wrap;flex:none}
 @media(max-width:760px){.photo-review-card .review-message{font-size:17px;line-height:1.6}}
+.review-demo-note{font-size:12px;line-height:1.7;color:#70635a;margin:0 0 26px;max-width:760px}
+.photo-review-card blockquote.review-message,.photo-review-card:not(.has-photo) blockquote.review-message{font-family:Georgia,'Times New Roman',serif;font-size:17px;font-style:normal;font-weight:400;line-height:1.55;letter-spacing:-.15px;margin:2px 0 20px;color:#57483f}
+@media(max-width:760px){.photo-review-card blockquote.review-message,.photo-review-card:not(.has-photo) blockquote.review-message{font-size:16px;line-height:1.6}.review-demo-note{font-size:12px;margin-bottom:23px}}

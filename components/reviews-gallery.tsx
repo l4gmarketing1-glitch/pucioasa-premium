@@ -33,23 +33,11 @@ export default function ReviewsGallery({
     Math.max(pageSize, expandedCount ?? pageSize),
   );
   if (!entries.length) return null;
-  const average = (
-    entries.reduce((sum, entry) => sum + entry.rating, 0) / entries.length
-  )
-    .toFixed(1)
-    .replace(".", ",");
   return (
     <div className={`reviews-showcase${demo ? " reviews-showcase-demo" : ""}`}>
       {demo && (
-        <p className="review-demo-banner">
-          <strong>
-            EXEMPLE DEMONSTRATIVE · NU SUNT RECENZII ALE CLIENȚILOR
-          </strong>
-          <span>
-            Aceste {entries.length} exemple nu reprezintă opinii ale clienților.
-            Numele, evaluările și textele sunt exemple fictive. Cele 3 imagini
-            sunt fotografii de produs.
-          </span>
+        <p className="review-demo-note">
+          Exemple de prezentare — numele, textele și evaluările sunt fictive.
         </p>
       )}
       <div className="showcase-header">
@@ -62,27 +50,6 @@ export default function ReviewsGallery({
             <br />
             <em>{demo ? "poveștile clienților." : "alegerea mai ușoară."}</em>
           </h2>
-        </div>
-        <div className="showcase-score">
-          {demo ? (
-            <>
-              <strong>{entries.length}</strong>
-              <span>exemple de design</span>
-            </>
-          ) : (
-            <>
-              <strong>
-                {average}
-                <small>/ 5</small>
-              </strong>
-              <span>
-                {entries.length}{" "}
-                {entries.length === 1
-                  ? "recenzie publicată"
-                  : "recenzii publicate"}
-              </span>
-            </>
-          )}
         </div>
       </div>
       <div className="review-grid photo-review-grid">
@@ -149,15 +116,8 @@ export default function ReviewsGallery({
         >
           Încarcă mai multe recenzii
           <ArrowDown size={16} />
-          <span>
-            {visibleCount} / {entries.length}
-          </span>
         </button>
       )}
-      <p className="reviews-visible-count" aria-live="polite">
-        {Math.min(visibleCount, entries.length)} din {entries.length}{" "}
-        {demo ? "exemple demonstrative" : "recenzii"}
-      </p>
     </div>
   );
 }

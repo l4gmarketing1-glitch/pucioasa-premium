@@ -38,29 +38,13 @@ export default function Reviews() {
     <section
       className="reviews-section"
       id="recenzii"
-      aria-labelledby="reviews-title"
+      aria-label="Păreri și feedback"
     >
       {reviews.length > 0 ? (
         <ReviewsGallery entries={reviews} />
       ) : (
         <ReviewsGallery entries={reviewExamples} demo />
       )}
-      <div className="reviews-intro">
-        <span className="eyebrow">
-          <span className="little-line" /> RECENZIILE CLIENȚILOR
-        </span>
-        <h2 id="reviews-title">
-          Confortul se simte.
-          <br />
-          <em>Poveștile se împărtășesc.</em>
-        </h2>
-        <p>
-          Un pat proaspăt aranjat. Culoarea aceea care schimbă camera.
-          <br className="reviews-desktop-break" /> Ne-ar plăcea să știm cum e la
-          tine acasă.
-        </p>
-      </div>
-
       {reviews.length > 0 ? (
         <>
           <button ref={trigger} className="review-write" onClick={openReview}>

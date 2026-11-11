@@ -186,10 +186,10 @@ try {
     });
   assert.equal((await fetch(origin + "/admin")).status, 401);
   assert.equal((await fetch(origin + "/admin/recenzii-preview")).status,401);
-  assert.equal(await page.locator('.review-demo-banner').count(),1);
-  assert.match(await page.locator('.review-demo-banner').innerText(), /NU SUNT RECENZII ALE CLIENȚILOR/);
+  assert.equal(await page.locator('.review-demo-note').count(),1);
+  assert.match(await page.locator('.review-demo-note').innerText(), /evaluările sunt fictive/);
   assert.equal(await page.locator('.photo-review-card').count(),3);
-  assert.ok(await page.evaluate(()=>Boolean(document.querySelector('.reviews-showcase').compareDocumentPosition(document.querySelector('#reviews-title')) & Node.DOCUMENT_POSITION_FOLLOWING)));
+  assert.ok(await page.evaluate(()=>Boolean(document.querySelector('.reviews-showcase').compareDocumentPosition(document.querySelector('.review-invitation')) & Node.DOCUMENT_POSITION_FOLLOWING)));
   await page.getByRole('button',{name:/Încarcă mai multe recenzii/}).click();
   assert.equal(await page.locator('.photo-review-card').count(),6);
   assert.equal(await page.locator('.review-verified').count(),0);
@@ -200,7 +200,7 @@ try {
   const previewResponse=await preview.goto(origin+'/admin/recenzii-preview',{waitUntil:'networkidle'});
   assert.equal(previewResponse.status(),200);
   assert.match(previewResponse.headers()['x-robots-tag'],/noindex/);
-  assert.match(await preview.locator('.review-demo-banner').innerText(),/nu reprezintă opinii ale clienților/);
+  assert.match(await preview.locator('.review-demo-note').innerText(),/evaluările sunt fictive/);
   assert.equal(await preview.locator('.photo-review-card').count(),6);
   assert.equal(await preview.locator('.review-verified').count(),0);
   await preview.screenshot({path:'/tmp/pucioasa-demo-recenzii.png',fullPage:true});
