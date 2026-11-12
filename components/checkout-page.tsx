@@ -47,9 +47,12 @@ type Props = {
 };
 type CheckoutState = { stripe: Stripe; clientSecret: string };
 const money = (amount: number) =>
-  new Intl.NumberFormat("ro-RO", { style: "currency", currency: "RON" }).format(
-    amount / 100,
-  );
+  new Intl.NumberFormat("ro-RO", {
+    style: "currency",
+    currency: "RON",
+    minimumFractionDigits: amount % 100 === 0 ? 0 : 2,
+    maximumFractionDigits: 2,
+  }).format(amount / 100);
 const appearance = {
   theme: "stripe" as const,
   variables: {
@@ -178,7 +181,6 @@ export default function CheckoutPage(props: Props) {
           <ArrowLeft size={15} /> Înapoi
         </Link>
         <div className="checkout-heading">
-          <span className="eyebrow">ULTIMUL PAS CĂTRE CONFORT</span>
           <h1>
             Finalizează <span>comanda.</span>
           </h1>
