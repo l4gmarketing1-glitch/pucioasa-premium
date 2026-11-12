@@ -236,7 +236,7 @@ export default function Storefront({
             Lenjerii de pat Pucioasa Premium
           </h2>
           <p className="product-description">
-            Alege pachetul și combină culorile preferate.
+            Alege oferta și combină culorile preferate.
           </p>
           {quantity === 1 && discount && !offerExpired && (
             <div className="discount-line">
@@ -275,7 +275,7 @@ export default function Storefront({
           </p>
           <div className="divider" />
           <fieldset className="bundle-options">
-            <legend>Alege pachetul</legend>
+            <legend>Alege oferta</legend>
             {bundleOffers.map((offer) => {
               const savings = product.amount * offer.quantity - offer.amount;
               return (
@@ -311,10 +311,6 @@ export default function Storefront({
                 </label>
               );
             })}
-            <p className="bundle-savings-note">
-              Economia este calculată față de seturile cumpărate separat la 149
-              lei.
-            </p>
           </fieldset>
           {quantity > 1 && (
             <div className="bundle-color-selection">

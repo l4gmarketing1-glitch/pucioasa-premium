@@ -3120,7 +3120,6 @@ footer {
 .bundle-option-price > strong { font-family: Georgia, serif; color: var(--wine); font-size: 24px; font-weight: 400; white-space: nowrap; }
 .bundle-option-price > strong > span { font-size: 12px; }
 .bundle-option-price > small { color: #58714c; font-size: 10px; }
-.bundle-savings-note { font-size: 10px; line-height: 1.6; color: var(--muted); margin: 10px 0 0; }
 .bundle-color-selection { margin: 0 0 19px; }
 .bundle-color-selection > p { font-size: 12px; font-weight: 500; line-height: 1.6; margin: 0 0 11px; }
 .bundle-color-selection > p > span { display: block; font-size: 11px; font-weight: 400; color: var(--muted); }
