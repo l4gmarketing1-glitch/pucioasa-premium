@@ -169,19 +169,45 @@ try {
       .getAttribute("aria-pressed"),
     "true",
   );
-  await primaryProduct.getByRole("button", { name: "Mărește cantitatea" }).click();
-  assert.match(await primaryProduct.locator(".price-row>strong").innerText(), /298/);
+  await primaryProduct.getByRole("radio", {name: "2 seturi, 279 lei", exact:true}).check();
+  for (const section of [primaryProduct, repeatProduct]) {
+    assert.match(await section.locator(".price-row>strong").innerText(), /279/);
+    assert.equal(await section.locator('.bundle-color-slot').count(), 2);
+  }
   await primaryProduct.locator(".buy").click();
   assert.match(await primaryProduct.locator(".form-error").innerText(), /Pregătim/);
-  assert.match(await repeatProduct.locator(".price-row>strong").innerText(), /298/);
-  assert.equal(await repeatProduct.locator(".photo-caption").innerText(), "Gri antracit");
+  await repeatProduct.locator('.bundle-color-slot').nth(1).click();
   await repeatProduct.getByRole("button", { name: "Alege Verde mentă", exact: true }).click();
   assert.equal(await primaryProduct.locator(".photo-caption").innerText(), "Verde mentă");
-  await repeatProduct.getByRole("button", { name: "Mărește cantitatea" }).click();
-  assert.match(await primaryProduct.locator(".price-row>strong").innerText(), /447/);
+  assert.match(await primaryProduct.locator('.bundle-color-slot').nth(0).innerText(), /Gri antracit/);
+  assert.match(await primaryProduct.locator('.bundle-color-slot').nth(1).innerText(), /Verde mentă/);
+  await repeatProduct.getByRole("radio", {name: "3 seturi, 399 lei", exact:true}).check();
+  assert.match(await primaryProduct.locator(".price-row>strong").innerText(), /399/);
+  assert.match(await primaryProduct.locator('.discount-line').innerText(), /48 lei/);
   await repeatProduct.locator(".buy").click();
   assert.match(await repeatProduct.locator(".form-error").innerText(), /Pregătim/);
-  await repeatProduct.screenshot({ path: "/tmp/pucioasa-comanda-desktop.png" });
+  await primaryProduct.getByRole("radio", {name: "5 seturi, 629 lei", exact:true}).check();
+  await primaryProduct.locator('.bundle-color-slot').nth(4).click();
+  await primaryProduct.getByRole('button', {name:'Alege Vișiniu',exact:true}).click();
+  await primaryProduct.getByRole("radio", {name: "1 set, 149 lei", exact:true}).check();
+  assert.equal(await primaryProduct.locator('.photo-caption').innerText(), 'Gri antracit');
+  await primaryProduct.getByRole("radio", {name: "5 seturi, 629 lei", exact:true}).check();
+  assert.match(await primaryProduct.locator('.bundle-color-slot').nth(4).innerText(), /Vișiniu/);
+  await page.reload({waitUntil:'networkidle'});
+  assert.equal(await primaryProduct.locator('.bundle-color-slot').count(),5);
+  assert.match(await primaryProduct.locator('.bundle-color-slot').nth(4).innerText(), /Vișiniu/);
+  await primaryProduct.screenshot({path:'/tmp/pucioasa-bundle-desktop.png'});
+  for (const width of [390, 320]) {
+    await page.setViewportSize({width,height:844});
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth), `five-set bundle fits ${width}px`);
+    await primaryProduct.locator('.bundle-color-slot').nth(4).click();
+    assert.equal(await primaryProduct.locator('.photo-caption').innerText(), 'Vișiniu');
+  }
+  await page.setViewportSize({width:390,height:844});
+  await primaryProduct.locator('.product-info').screenshot({path:'/tmp/pucioasa-bundle-mobile.png',style:'.mobile-buy {visibility:hidden;}'});
+  await primaryProduct.getByRole('button', {name:'Aplică vișiniu tuturor seturilor'}).click();
+  assert.ok((await repeatProduct.locator('.bundle-color-slot strong').allTextContents()).every(name=>name==='Vișiniu'));
+  await page.setViewportSize({width:1440,height:1000});
   await page.evaluate(() => sessionStorage.clear());
   await page.reload({ waitUntil: "networkidle" });
   await page.evaluate(() => window.scrollTo(0, 0));
@@ -332,7 +358,7 @@ try {
   await page.goto(origin + "/comanda?culoare=v04&cantitate=2", {waitUntil:'networkidle'});
   assert.match(await page.locator('h1').innerText(), /Finalizează comanda/);
   assert.match(await page.locator('.checkout-product').innerText(), /Bej nisipiu/);
-  assert.match(await page.locator('.checkout-total dd').innerText(), /298/);
+  assert.match(await page.locator('.checkout-total dd').innerText(), /279/);
   assert.equal(await page.locator('.checkout-pay').isDisabled(), true);
   assert.equal(await page.locator('input[name="email"]').isDisabled(), true);
   assert.equal(await page.locator('iframe').count(),0);
@@ -344,6 +370,13 @@ try {
   }
   await page.setViewportSize({width:390,height:844});
   await page.screenshot({path:'/tmp/pucioasa-checkout-mobile.png',fullPage:true});
+  await page.goto(origin + '/comanda?culori=v04,v03,v12', {waitUntil:'networkidle'});
+  assert.equal(await page.locator('.checkout-product').count(),3);
+  assert.match(await page.locator('.checkout-total dd').innerText(), /399/);
+  assert.match(await page.locator('.checkout-bundle-discount').innerText(), /48/);
+  assert.match(await page.locator('.checkout-summary').innerText(), /Verde mentă/);
+  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  await page.screenshot({path:'/tmp/pucioasa-checkout-bundle-mobile.png',fullPage:true});
   await page.goto(origin + '/comanda?culoare=invalid&cantitate=0');
   assert.match(await page.locator('h1').innerText(), /Alege varianta/);
   await page.goto(origin + "/comanda/succes?session_id=invalid");
@@ -356,7 +389,7 @@ try {
   );
   assert.deepEqual(errors, [], "no browser runtime errors");
   console.log(
-    "PASS: 19 variant images, persistence, quantity total, prelaunch feedback, 320/390px layouts, mobile menu, admin auth, checkout origin/config guards, false confirmation prevention, legal pages and prelaunch robots.",
+    "PASS: 19 variant images, synchronized 1/2/3/5 bundles, mixed colors, persistence, exact discounted totals, prelaunch feedback, 320/390px layouts, mobile menu, admin auth, checkout origin/config guards, false confirmation prevention, legal pages and prelaunch robots.",
   );
 } finally {
   await browser?.close();

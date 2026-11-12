@@ -19,9 +19,9 @@ Validation: `npm test`, `npm run typecheck`, `npm run build`, then `npm start`.
 
 ## Implemented
 
-- Responsive product page with all 19 original photographs and stable variant IDs v01–v19 matching supplied filenames. Session storage remembers the selected variant. Quantities 1–5; amount validated on the server.
+- Responsive product page with all 19 original photographs and stable variant IDs v01–v19 matching supplied filenames. Session storage remembers the selected package and colors. Choose 1, 2, 3 or 5 sets, with one color per set; totals are recalculated on the server.
 - Custom checkout at `/comanda`, using Stripe Checkout Sessions (`ui_mode: elements`) and Payment Element. Our page collects contact, shipping and optional separate billing addresses. Stripe-secured card fields handle payment data. Free shipping and price are enforced on the server. Confirmation verifies the paid session, product, currency and exact amount; retrying session creation uses an idempotency key.
-- `/admin` uses HTTP Basic authentication with a random password of at least 32 characters. Paginated Stripe sessions show customer, delivery address, variant, quantity and payment state. No sample customer data.
+- `/admin` uses HTTP Basic authentication with a random password of at least 32 characters. Paginated Stripe sessions show customer, delivery address, all selected colors with quantities, total and payment state. No sample customer data.
 - Orders remain in Stripe; there is no ephemeral local order database. The dashboard is read-only. Refunds are managed in Stripe Dashboard; initial Checkout payment state does not reflect later refunds or shipment state.
 - SEO metadata, canonical, robots, sitemap, Product/Offer structured data and Search Console verification support. Indexing is disabled before launch configuration.
 - The homepage includes owner-supplied reviews and ratings, with purchase-verification labels based on the owner’s explicit confirmation. No aggregate rating markup, invented stock claims, advertising or analytics trackers.
@@ -60,7 +60,7 @@ The reviews section shows the owner-supplied collection followed by an invitatio
 
 The selling price is 149 RON, with shipping included, sourced from `product.amount` in `lib/catalog.mjs`. The merchant has supplied the material name Damasc Fine. Public checkout labels use “Plată securizată cu cardul”; Stripe remains the actual provider and is accurately identified in the legal/privacy disclosures.
 
-The merchant confirmed a reference price of 199 RON and a selling price of 149 RON. The product selector displays the struck-through reference price and a rounded 25% discount (actual reduction approximately 25.13%). Both amounts scale with quantity. `REFERENCE_PRICE_RON` optionally overrides the confirmed catalog reference; an empty or absent value uses 199 RON. Any future override must reflect the actual reference price.
+The merchant confirmed a reference price of 199 RON and a selling price of 149 RON. The product selector displays the struck-through reference price and a rounded 25% discount (actual reduction approximately 25.13%). This reference-price comparison applies to a single set. Bundles instead compare against the current individual price of 149 RON, so their additional savings are explicit. `REFERENCE_PRICE_RON` optionally overrides the confirmed catalog reference; an empty or absent value uses 199 RON. Any future override must reflect the actual reference price.
 
 To enable the genuine visitor window, set `VISITOR_OFFER_ENABLED=true` and a cryptographically random `OFFER_SIGNING_SECRET` of at least 32 characters in Vercel's secure environment settings, then redeploy. Generate locally with `openssl rand -hex 32`; never commit or paste the value in chat. The window starts only once the store is configured to accept orders. The offer API signs an 86-minute deadline in an HttpOnly, SameSite cookie. Reloads retain it, including after expiry. Checkout checks the signature and expiry on the server before contacting Stripe. An optional global `OFFER_ENDS_AT` can close the window earlier.
 
@@ -83,3 +83,13 @@ The homepage hero uses the owner-supplied `public/images/hero-lenjerie-visinie.j
 `npm test` covers server-controlled prices, variant validation, matched test/live keys and paid-session validation. `node tests/browser.mjs` checks the prelaunch checkout, product summary and responsive layout. `node tests/checkout-integration.mjs` uses a local Stripe HTTP fixture and a simulated browser SDK to exercise session parameters, idempotency, retry behavior, separate billing details, double-click protection, server confirmation and admin details. It does not send requests or payments to Stripe. `node tests/visitor-offer.mjs` checks that expired/missing offer tokens still prevent checkout.
 
 A successful real Stripe sandbox payment, declined card and 3D Secure flow remain required after keys are configured. No real or sandbox Stripe transaction was performed in this environment. The page remains safely disabled until configuration is complete. See [STRIPE_SETUP.md](STRIPE_SETUP.md).
+
+## Quantity bundles
+
+`lib/bundles.mjs` is the shared pricing source: 1 set = 149 RON; 2 = 279 RON (save 19); 3 = 399 RON (save 48); 5 = 629 RON (save 116). Unit prices decrease from 149 to 139.50, 133 and 125.80 RON. The merchant delegated these prices; costs and margins are not available in the repository. Savings compare with separate sets at 149 RON, not the historical 199 RON price. Shipping remains free. “Recomandat” is an editorial suggestion, not a sales-popularity claim.
+
+Both product sections share the package, active set and colors. One set is selected initially. Each set can use any of the 19 variants. Selecting a set updates the shared palette/gallery; there is an explicit action to apply a color to all sets. Switching sizes preserves previously chosen colors during the visit. Session storage persists the current cart for checkout/back/reload.
+
+`/comanda?culori=v04,v03,v12` represents a mixed three-set package. Old `culoare` / `cantitate` links remain supported, including four sets at the standard price. Stripe line items group identical variants at the discounted unit amount; the server ignores client prices. Metadata records the color list, bundle ID and agreed amount for later confirmation and admin display. Confirmation uses this server-created price snapshot so subsequent price edits do not invalidate already-open sessions; legacy sessions retain their old validation. No separate Stripe coupon or product setup is necessary.
+
+Tests cover all tiers, exact totals, mixed/duplicate colors, invalid selections, persistence, synchronized controls, 320px layouts, Stripe session parameters and confirmation. Real Stripe sandbox transactions remain a separate setup step.

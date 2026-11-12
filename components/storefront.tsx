@@ -8,7 +8,6 @@ import {
   ShieldCheck,
   Package,
   Plus,
-  Minus,
   Phone,
   Menu,
   X,
@@ -22,6 +21,7 @@ import {
   activeDeadline,
   product,
 } from "@/lib/catalog.mjs";
+import { bundleOffers, quoteCart } from "@/lib/bundles.mjs";
 import Reviews from "@/components/reviews";
 import ReviewRating from "@/components/review-rating";
 
@@ -29,6 +29,12 @@ const colors = [
   ...catalogColors.filter((color) => color.id === "v04"),
   ...catalogColors.filter((color) => color.id !== "v04"),
 ];
+
+const bundleMoney = (amount: number) =>
+  new Intl.NumberFormat("ro-RO", {
+    minimumFractionDigits: amount % 100 ? 2 : 0,
+    maximumFractionDigits: 2,
+  }).format(amount / 100);
 
 export default function Storefront({
   ready,
@@ -43,8 +49,14 @@ export default function Storefront({
   delivery: string;
   discount: { amount: number; percent: number } | null;
 }) {
-  const [selected, setSelected] = useState(colors[0]);
+  const [chosenColors, setChosenColors] = useState<string[]>(["v04"]);
   const [quantity, setQuantity] = useState(1);
+  const [activeSet, setActiveSet] = useState(0);
+  const [selectionLoaded, setSelectionLoaded] = useState(false);
+  const selected =
+    colors.find((color) => color.id === chosenColors[activeSet]) || colors[0];
+  const variants = chosenColors.slice(0, quantity);
+  const cart = quoteCart({ variants })!;
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [menu, setMenu] = useState(false);
@@ -78,14 +90,39 @@ export default function Storefront({
   const [timerReady, setTimerReady] = useState(false);
   const [cancelled, setCancelled] = useState(false);
   useEffect(() => {
-    const saved = sessionStorage.getItem("pp-variant");
-    const c = colors.find((c) => c.id === saved);
-    if (c) setSelected(c);
+    try {
+      const saved = JSON.parse(
+        sessionStorage.getItem("pp-bundle-cart") || "null",
+      );
+      const restored = quoteCart(saved);
+      if (
+        restored &&
+        bundleOffers.some((offer) => offer.quantity === restored.quantity)
+      ) {
+        setChosenColors(restored.variants);
+        setQuantity(restored.quantity);
+      } else {
+        const previous = sessionStorage.getItem("pp-variant");
+        if (colors.some((color) => color.id === previous))
+          setChosenColors([previous!]);
+      }
+    } catch {}
+    setSelectionLoaded(true);
     setCancelled(
       new URLSearchParams(window.location.search).get("checkout") ===
         "cancelled",
     );
   }, []);
+  useEffect(() => {
+    if (!selectionLoaded) return;
+    try {
+      sessionStorage.setItem(
+        "pp-bundle-cart",
+        JSON.stringify({ variants: chosenColors.slice(0, quantity) }),
+      );
+      sessionStorage.setItem("pp-variant", chosenColors[0]);
+    } catch {}
+  }, [chosenColors, quantity, selectionLoaded]);
   useEffect(() => {
     const tick = () => {
       setRemaining(
@@ -100,8 +137,20 @@ export default function Storefront({
   const offerExpired =
     timerReady && Number.isFinite(Date.parse(offerDeadline)) && remaining === 0;
   function choose(c: (typeof colors)[number]) {
-    setSelected(c);
-    sessionStorage.setItem("pp-variant", c.id);
+    setChosenColors((previous) =>
+      previous.map((id, index) => (index === activeSet ? c.id : id)),
+    );
+    setError("");
+  }
+  function chooseBundle(nextQuantity: number) {
+    setChosenColors((previous) =>
+      Array.from(
+        { length: Math.max(previous.length, nextQuantity) },
+        (_, index) => previous[index] || selected.id,
+      ),
+    );
+    setQuantity(nextQuantity);
+    setActiveSet((index) => Math.min(index, nextQuantity - 1));
     setError("");
   }
   async function checkout() {
@@ -124,7 +173,7 @@ export default function Storefront({
         sessionStorage.removeItem("pp-checkout-request");
       } catch {}
       window.location.assign(
-        `/comanda?culoare=${encodeURIComponent(selected.id)}&cantitate=${quantity}`,
+        `/comanda?culori=${encodeURIComponent(variants.join(","))}`,
       );
     } catch (e) {
       setError(
@@ -187,9 +236,9 @@ export default function Storefront({
             Lenjerii de pat Pucioasa Premium
           </h2>
           <p className="product-description">
-            Alege nuanța preferată și bucură-te de un set complet.
+            Alege pachetul și combină culorile preferate.
           </p>
-          {discount && !offerExpired && (
+          {quantity === 1 && discount && !offerExpired && (
             <div className="discount-line">
               <span>
                 Preț anterior{" "}
@@ -203,9 +252,17 @@ export default function Storefront({
               <strong>−{discount.percent}%</strong>
             </div>
           )}
+          {quantity > 1 && cart.savings > 0 && (
+            <div className="discount-line">
+              <span>
+                Cumpărate separat <s>{bundleMoney(cart.baseTotal)} lei</s>
+              </span>
+              <strong>Economisești {bundleMoney(cart.savings)} lei</strong>
+            </div>
+          )}
           <div className="price-row">
             <strong>
-              {(product.amount / 100) * quantity} <span>lei</span>
+              {bundleMoney(cart.total)} <span>lei</span>
             </strong>
             <span className="free-tag">
               <Truck size={15} /> Transport gratuit
@@ -214,12 +271,89 @@ export default function Storefront({
           <p className="price-footnote">
             {quantity === 1
               ? "Prețul setului complet."
-              : `${quantity} seturi × ${product.amount / 100} lei`}
+              : `Total pentru ${quantity} seturi · ${bundleMoney(cart.total / quantity)} lei / set`}
           </p>
           <div className="divider" />
+          <fieldset className="bundle-options">
+            <legend>Alege pachetul</legend>
+            {bundleOffers.map((offer) => {
+              const savings = product.amount * offer.quantity - offer.amount;
+              return (
+                <label
+                  key={offer.id}
+                  className={`bundle-option${quantity === offer.quantity ? " is-selected" : ""}${offer.id === "trio" ? " is-recommended" : ""}`}
+                >
+                  <input
+                    type="radio"
+                    name={compact ? "pachet-comanda" : "pachet-produs"}
+                    value={offer.quantity}
+                    checked={quantity === offer.quantity}
+                    onChange={() => chooseBundle(offer.quantity)}
+                    aria-label={`${offer.label}, ${bundleMoney(offer.amount)} lei`}
+                  />
+                  <span className="bundle-option-copy">
+                    <strong>{offer.label}</strong>
+                    <small>
+                      {bundleMoney(offer.amount / offer.quantity)} lei / set
+                    </small>
+                    {offer.badge && (
+                      <span className="bundle-tag">{offer.badge}</span>
+                    )}
+                  </span>
+                  <span className="bundle-option-price">
+                    <strong>
+                      {bundleMoney(offer.amount)} <span>lei</span>
+                    </strong>
+                    {savings > 0 && (
+                      <small>Economisești {bundleMoney(savings)} lei</small>
+                    )}
+                  </span>
+                </label>
+              );
+            })}
+            <p className="bundle-savings-note">
+              Economia este calculată față de seturile cumpărate separat la 149
+              lei.
+            </p>
+          </fieldset>
+          {quantity > 1 && (
+            <div className="bundle-color-selection">
+              <p>
+                Alege culoarea fiecărui set{" "}
+                <span>Poți combina orice culori.</span>
+              </p>
+              <div
+                className="bundle-color-slots"
+                role="group"
+                aria-label="Culorile pachetului"
+              >
+                {variants.map((id, index) => {
+                  const color = colors.find((item) => item.id === id)!;
+                  return (
+                    <button
+                      key={index}
+                      className={`bundle-color-slot${activeSet === index ? " is-active" : ""}`}
+                      aria-pressed={activeSet === index}
+                      aria-label={`Schimbă culoarea setului ${index + 1}: ${color.name}`}
+                      onClick={() => setActiveSet(index)}
+                    >
+                      <Image src={color.image} alt="" width={36} height={40} />
+                      <span>
+                        <small>Setul {index + 1}</small>
+                        <strong>{color.name}</strong>
+                      </span>
+                      {activeSet === index && <Check size={14} />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
           <fieldset className="color-field">
             <legend>
-              Alege culoarea preferată{" "}
+              {quantity === 1
+                ? "Alege culoarea preferată"
+                : `Culoarea setului ${activeSet + 1}`}{" "}
               <strong aria-live="polite">{selected.name}</strong>
             </legend>
             <div className="swatches">
@@ -257,13 +391,28 @@ export default function Storefront({
               ))}
             </div>
           </fieldset>
+          {quantity > 1 && variants.some((id) => id !== selected.id) && (
+            <button
+              className="bundle-apply-color"
+              onClick={() =>
+                setChosenColors((previous) =>
+                  previous.map((id, index) =>
+                    index < quantity ? selected.id : id,
+                  ),
+                )
+              }
+            >
+              Aplică {selected.name.toLowerCase()} tuturor seturilor
+            </button>
+          )}
           <div
             className="set-included"
             id={compact ? "comanda-detalii" : "detalii"}
           >
             <div className="set-heading">
               <span>
-                <Layers size={16} /> Ce conține setul
+                <Layers size={16} />{" "}
+                {quantity === 1 ? "Ce conține setul" : "Ce conține fiecare set"}
               </span>
               <small>6 piese</small>
             </div>
@@ -334,25 +483,7 @@ export default function Storefront({
               Perioada acestei oferte s-a încheiat.
             </p>
           )}
-          <div className="purchase-label">Câte seturi îți dorești?</div>
-          <div className="purchase-row">
-            <div className="quantity">
-              <button
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                disabled={quantity === 1}
-                aria-label="Scade cantitatea"
-              >
-                <Minus size={16} />
-              </button>
-              <output aria-label="Cantitate">{quantity}</output>
-              <button
-                onClick={() => setQuantity((q) => Math.min(5, q + 1))}
-                disabled={quantity === 5}
-                aria-label="Mărește cantitatea"
-              >
-                <Plus size={16} />
-              </button>
-            </div>
+          <div className="purchase-row bundle-purchase">
             <button
               className="primary buy"
               disabled={
@@ -611,10 +742,11 @@ export default function Storefront({
       </footer>
       <div className="mobile-buy">
         <div>
-          <strong>{(product.amount / 100) * quantity} lei</strong>
+          <strong>{bundleMoney(cart.total)} lei</strong>
           <small>
-            {selected.name}
-            {quantity > 1 ? ` · ${quantity} seturi` : ""}
+            {quantity === 1
+              ? selected.name
+              : `${quantity} seturi · ${new Set(variants).size} ${new Set(variants).size === 1 ? "culoare" : "culori"}`}
           </small>
         </div>
         <a href="#produs" className="primary">

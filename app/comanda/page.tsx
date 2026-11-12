@@ -1,6 +1,6 @@
 import Link from "next/link";
 import CheckoutPage from "@/components/checkout-page";
-import { colors, product, validateSelection } from "@/lib/catalog.mjs";
+import { quoteCart } from "@/lib/bundles.mjs";
 import { storeReady } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
@@ -12,13 +12,24 @@ export const metadata = {
 export default async function OrderPage({
   searchParams,
 }: {
-  searchParams: Promise<{ culoare?: string; cantitate?: string }>;
+  searchParams: Promise<{
+    culoare?: string;
+    cantitate?: string;
+    culori?: string;
+  }>;
 }) {
   const query = await searchParams;
-  const selection = validateSelection({
-    color: query.culoare ?? "v04",
-    quantity: Number(query.cantitate ?? 1),
-  });
+  const selection = quoteCart(
+    query.culori !== undefined
+      ? {
+          variants:
+            typeof query.culori === "string" ? query.culori.split(",") : [],
+        }
+      : {
+          color: query.culoare ?? "v04",
+          quantity: Number(query.cantitate ?? 1),
+        },
+  );
   if (!selection)
     return (
       <main className="message-page">
@@ -29,12 +40,9 @@ export default async function OrderPage({
         </Link>
       </main>
     );
-  const color = colors.find((item) => item.id === selection.color)!;
   return (
     <CheckoutPage
-      color={color}
-      quantity={selection.quantity}
-      unitAmount={product.amount}
+      cart={selection}
       ready={storeReady()}
       publishableKey={process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || ""}
     />

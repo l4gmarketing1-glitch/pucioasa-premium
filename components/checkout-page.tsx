@@ -25,10 +25,23 @@ import {
   useCheckoutElements,
 } from "@stripe/react-stripe-js/checkout";
 
-type Props = {
-  color: { id: string; name: string; image: string; hex: string };
+type Cart = {
+  variants: string[];
   quantity: number;
-  unitAmount: number;
+  total: number;
+  baseTotal: number;
+  savings: number;
+  signature: string;
+  label: string;
+  items: {
+    color: { id: string; name: string; image: string; hex: string };
+    quantity: number;
+    unitAmount: number;
+    lineTotal: number;
+  }[];
+};
+type Props = {
+  cart: Cart;
   ready: boolean;
   publishableKey: string;
 };
@@ -61,7 +74,7 @@ export default function CheckoutPage(props: Props) {
     let active = true;
     let timer: ReturnType<typeof setTimeout>;
     if (!requestId.current) {
-      const cart = `${props.color.id}:${props.quantity}:${props.unitAmount}`;
+      const cart = props.cart.signature;
       const now = Date.now();
       try {
         const previous = JSON.parse(
@@ -101,8 +114,7 @@ export default function CheckoutPage(props: Props) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            color: props.color.id,
-            quantity: props.quantity,
+            variants: props.cart.variants,
             requestId: requestId.current,
           }),
           signal: controller.signal,
@@ -141,16 +153,9 @@ export default function CheckoutPage(props: Props) {
       clearTimeout(timer);
       controller.abort();
     };
-  }, [
-    props.ready,
-    props.publishableKey,
-    props.color.id,
-    props.quantity,
-    props.unitAmount,
-    attempt,
-  ]);
+  }, [props.ready, props.publishableKey, props.cart.signature, attempt]);
 
-  const total = props.unitAmount * props.quantity;
+  const total = props.cart.total;
   return (
     <div className="checkout-page">
       <header className="checkout-header">
@@ -228,31 +233,45 @@ export default function CheckoutPage(props: Props) {
           </div>
           <aside className="checkout-summary" aria-label="Rezumatul comenzii">
             <h2>Comanda ta</h2>
-            <div className="checkout-product">
-              <Image
-                src={props.color.image}
-                alt={`Lenjerie de pat — ${props.color.name}`}
-                width={112}
-                height={124}
-              />
-              <div>
-                <strong>Lenjerii de pat Pucioasa Premium</strong>
-                <span>
-                  <i style={{ background: props.color.hex }} />
-                  {props.color.name}
-                </span>
-                <small>
-                  6 piese · {props.quantity}{" "}
-                  {props.quantity === 1 ? "set" : "seturi"}
-                </small>
-                <small>{money(props.unitAmount)} / set</small>
+            {props.cart.quantity > 1 && (
+              <p className="checkout-bundle-label">{props.cart.label}</p>
+            )}
+            {props.cart.items.map((item) => (
+              <div
+                className="checkout-product"
+                key={`${item.color.id}-${item.unitAmount}`}
+              >
+                <Image
+                  src={item.color.image}
+                  alt={`Lenjerie de pat — ${item.color.name}`}
+                  width={112}
+                  height={124}
+                />
+                <div>
+                  <strong>Lenjerii de pat Pucioasa Premium</strong>
+                  <span>
+                    <i style={{ background: item.color.hex }} />
+                    {item.color.name}
+                  </span>
+                  <small>
+                    6 piese / set · {item.quantity}{" "}
+                    {item.quantity === 1 ? "set" : "seturi"}
+                  </small>
+                  <small>{money(item.unitAmount)} / set</small>
+                </div>
               </div>
-            </div>
+            ))}
             <dl className="checkout-totals">
               <div>
-                <dt>Produse</dt>
-                <dd>{money(total)}</dd>
+                <dt>{props.cart.savings > 0 ? "Preț separat" : "Produse"}</dt>
+                <dd>{money(props.cart.baseTotal)}</dd>
               </div>
+              {props.cart.savings > 0 && (
+                <div className="checkout-bundle-discount">
+                  <dt>Reducere pachet</dt>
+                  <dd>−{money(props.cart.savings)}</dd>
+                </div>
+              )}
               <div>
                 <dt>Transport</dt>
                 <dd className="checkout-free">Gratuit</dd>

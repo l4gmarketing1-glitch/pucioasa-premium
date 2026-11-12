@@ -22,12 +22,12 @@ Checkout-ul este activ doar dacă `STORE_LIVE`, `PRODUCT_CONFIRMED` și `LEGAL_C
 
 ## 2. Parcurge comanda
 
-1. Selectează o culoare și o cantitate pe pagina principală. „Comandă acum” deschide `/comanda` pe același site.
-2. Verifică fotografia, culoarea, cantitatea, totalul de 149 lei/set și transportul gratuit.
+1. Selectează pachetul și culoarea fiecărui set pe pagina principală. „Comandă acum” deschide `/comanda` pe același site.
+2. Verifică fotografiile, culorile, cantitățile, reducerea și transportul gratuit. Totalurile sunt 149 lei pentru 1 set, 279 lei pentru 2, 399 lei pentru 3 și 629 lei pentru 5. Testează și un pachet cu mai multe culori.
 3. Completează emailul, telefonul, numele și adresa din România, inclusiv un cod poștal de șase cifre. Adresa de facturare poate fi diferită.
 4. Completează câmpurile Stripe pentru card și acceptă termenii. „Plătește … RON” confirmă sesiunea Stripe. O eroare păstrează formularul pentru corectare/reîncercare. Reîncărcarea aceleiași pagini reutilizează cererea de sesiune, printr-un identificator temporar din browser; o comandă nouă pornită de la produs primește o cerere nouă.
 5. Pagina de confirmare citește sesiunea de pe server și afișează succes numai dacă plata este confirmată, comanda aparține magazinului, moneda și suma corespund.
-6. Verifică în `/admin` și Stripe Dashboard starea **Plătită**, emailul, telefonul, adresa de livrare, culoarea, cantitatea și suma.
+6. Verifică în `/admin` și Stripe Dashboard starea **Plătită**, emailul, telefonul, adresa de livrare, fiecare culoare cu cantitatea aferentă și suma.
 
 ## 3. Scenarii de test Stripe
 

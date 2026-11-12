@@ -19,12 +19,16 @@ const fakeSession = () => ({
   status: "complete",
   payment_status: paymentStatus,
   currency: "ron",
-  amount_total: wrongAmount ? 1 : 29800,
+  amount_total: wrongAmount ? 1 : 27900,
   metadata: {
     product_id: "lenjerie-6-piese",
     color: "Bej nisipiu",
     color_id: "v04",
     quantity: "2",
+    cart_version: "bundle-v1",
+    variants: "v04,v04",
+    expected_total: "27900",
+    bundle_id: "duo",
   },
   customer_details: {
     name: "Client Test",
@@ -173,7 +177,7 @@ try {
   );
   const params = new URLSearchParams(requests.at(-1).body);
   assert.equal(params.get("ui_mode"), "elements");
-  assert.equal(params.get("line_items[0][price_data][unit_amount]"), "14900");
+  assert.equal(params.get("line_items[0][price_data][unit_amount]"), "13950");
   assert.equal(params.get("line_items[0][quantity]"), "2");
   assert.equal(
     params.get("shipping_address_collection[allowed_countries][0]"),
@@ -188,6 +192,20 @@ try {
   assert.ok(idempotency.includes(requestId));
   await send(body);
   assert.equal(requests.at(-1).headers["idempotency-key"], idempotency);
+  assert.equal((await send({variants:[],requestId})).status,400);
+  assert.equal((await send({variants:['v04','missing'],requestId})).status,400);
+  await send({variants:['v04','v03','v12'],requestId,total:1,unitAmount:1});
+  const mixed = new URLSearchParams(requests.at(-1).body);
+  assert.equal(mixed.get('metadata[variants]'),'v04,v03,v12');
+  assert.equal(mixed.get('metadata[expected_total]'),'39900');
+  assert.equal(mixed.get('line_items[2][price_data][unit_amount]'),'13300');
+  assert.equal(mixed.get('line_items[2][price_data][product_data][metadata][color]'),'v12');
+  assert.notEqual(requests.at(-1).headers['idempotency-key'],idempotency);
+  await send({variants:['v03','v03','v04','v12','v15'],requestId});
+  const five = new URLSearchParams(requests.at(-1).body);
+  assert.equal(five.get('metadata[expected_total]'),'62900');
+  assert.equal(five.get('line_items[0][quantity]'),'2');
+  assert.equal(five.get('line_items[0][price_data][unit_amount]'),'12580');
   failCreate = true;
   assert.equal((await send({ ...body, requestId: randomUUID() })).status, 502);
   failCreate = false;
@@ -215,7 +233,7 @@ try {
           id: "cs_test_local",
           currency: "ron",
           status: { type: "open" },
-          total: { total: { minorUnitsAmount: 29800, amount: "298.00" } },
+          total: { total: { minorUnitsAmount: 27900, amount: "279.00" } },
         };
         return {
           on() {},
@@ -267,10 +285,10 @@ try {
   await page.goto(origin, { waitUntil: "networkidle" });
   await page
     .locator("#produs")
-    .getByRole("button", { name: "Mărește cantitatea" })
-    .click();
+    .getByRole("radio", { name: "2 seturi, 279 lei", exact:true })
+    .check();
   await page.locator("#produs .buy").click();
-  await page.waitForURL("**/comanda?culoare=v04&cantitate=2");
+  await page.waitForURL("**/comanda?culori=v04%2Cv04");
   await page.waitForFunction(
     () => !document.querySelector(".checkout-pay").disabled,
   );
@@ -287,7 +305,7 @@ try {
     firstCheckoutKey,
     "reload reuses the same checkout session",
   );
-  assert.match(await page.locator(".checkout-total dd").innerText(), /298/);
+  assert.match(await page.locator(".checkout-total dd").innerText(), /279/);
   const fill = async (name, value) =>
     page.locator(`[name="${name}"]`).fill(value);
   await fill("email", "client@example.invalid");

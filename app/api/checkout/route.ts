@@ -8,7 +8,7 @@ import {
 import { readOfferToken } from "@/lib/offer-token.mjs";
 import { NextRequest, NextResponse } from "next/server";
 import { stripeClient, storeReady, siteUrl } from "@/lib/store";
-import { product, validateSelection } from "@/lib/catalog.mjs";
+import { quoteCart } from "@/lib/bundles.mjs";
 export async function POST(req: NextRequest) {
   if (req.headers.get("origin") !== new URL(siteUrl).origin)
     return NextResponse.json(
@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
   } catch {
     return NextResponse.json({ error: "Cerere invalidă." }, { status: 400 });
   }
-  const selection = validateSelection(body);
+  const selection = quoteCart(body);
   if (!selection)
     return NextResponse.json(
       { error: "Alege o culoare și între 1 și 5 seturi." },
@@ -75,7 +75,7 @@ export async function POST(req: NextRequest) {
         siteUrl,
       ) as Stripe.Checkout.SessionCreateParams,
       {
-        idempotencyKey: `pp-checkout:${body.requestId}:${selection.color}:${selection.quantity}:${product.amount}`,
+        idempotencyKey: `pp-checkout:${body.requestId}:${selection.signature}`,
       },
     );
     if (!session.client_secret)
