@@ -534,7 +534,7 @@ export default function Storefront({
                   </span>
                   <Plus size={16} />
                 </summary>
-                <p>Livrare gratuită în maxim 48 de ore prin curier rapid.</p>
+                <p>Livrarea este gratuită în maxim 48 de ore prin Fan Curier Express</p>
               </details>
               <details>
                 <summary>

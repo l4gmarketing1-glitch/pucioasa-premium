@@ -282,8 +282,8 @@ export default function CheckoutPage(props: Props) {
               </div>
             </dl>
             <p className="checkout-delivery">
-              <Truck size={18} /> Livrare gratuită în maxim 48 de ore prin
-              curier rapid.
+              <Truck size={18} /> Livrarea este gratuită în maxim 48 de ore prin
+              Fan Curier Express
             </p>
             <p className="checkout-security">
               <ShieldCheck size={18} /> Datele cardului sunt procesate securizat
