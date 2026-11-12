@@ -92,7 +92,7 @@ export default function ReviewsGallery({
                 {!demo &&
                   entry.verification?.method === "manual_order_match" && (
                     <span className="review-verified">
-                      <BadgeCheck size={13} />
+                      <BadgeCheck size={13} aria-hidden="true" />
                       Recenzie verificată
                     </span>
                   )}

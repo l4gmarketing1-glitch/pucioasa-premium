@@ -51,9 +51,9 @@ export default function ReviewPreview() {
       </div>
       <p className="review-preview-note">
         Cele 41 de nume și textele au fost furnizate de magazin, care a
-        confirmat că toate evaluările sunt de cinci stele. Fotografiile sunt
-        imagini de produs. „Recenzie verificată” apare doar după verificarea
-        unei comenzi.
+        confirmat că toate evaluările sunt de cinci stele și că a verificat
+        achizițiile pentru toate cele 41 de recenzii. Fotografiile sunt imagini
+        de produs.
       </p>
     </main>
   );

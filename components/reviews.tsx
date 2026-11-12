@@ -1,7 +1,15 @@
 "use client";
 
 import { useRef, useState, type FormEvent } from "react";
-import { ArrowRight, Check, Heart, Mail, Quote, Star, X } from "lucide-react";
+import {
+  ArrowRight,
+  Check,
+  Heart,
+  MessageSquare,
+  Quote,
+  Star,
+  X,
+} from "lucide-react";
 import { reviews } from "@/lib/reviews";
 import ReviewsGallery from "@/components/reviews-gallery";
 
@@ -54,20 +62,19 @@ export default function Reviews() {
         <div className="review-invitation-copy">
           <span className="eyebrow">POVESTEA TA CONTEAZĂ</span>
           <h3>
-            Cum se simte
-            <br />
-            <em>acasă, în noua culoare?</em>
+            Te-ai odihnit mai bine cu <em>lenjeriile Pucioasa Premium</em>?
           </h3>
           <p>
-            Dacă ai încercat lenjeria noastră, povestește-ne despre alegerea ta.
-            Părerea ta îi poate ajuta și pe ceilalți să o găsească pe a lor.
+            Dacă ai încercat lenjeria noastră, povestește-ne despre alegerea
+            făcută. Părerea ta contează, îi poate ajuta și pe ceilalți să o
+            găsească pe a lor.
           </p>
           <button ref={trigger} className="primary" onClick={openReview}>
             Scrie o recenzie <ArrowRight size={17} />
           </button>
           <small>
-            <Mail size={13} /> Ne trimiți părerea prin email. O publicăm după
-            verificare.
+            <MessageSquare size={13} /> Completează formularul pentru a publica
+            o recenzie.
           </small>
         </div>
       </div>

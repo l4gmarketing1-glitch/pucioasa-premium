@@ -10,7 +10,11 @@ export type Review = {
   colorName: string;
   publishedAt: string;
   // Set only after matching the genuine submission to a real purchase.
-  verification?: { method: "manual_order_match"; verifiedAt: string };
+  verification?: {
+    method: "manual_order_match";
+    verifiedAt: string;
+    verifiedBy?: "store_owner";
+  };
   image?: { src: string; alt: string; kind: "customer" | "product" };
 };
 
@@ -90,7 +94,7 @@ const suppliedNamedTexts: Record<string, string> = {
 };
 let nextText = 0;
 // The store owner confirmed on 2026-11-11 that all 41 supplied ratings are five stars.
-// This confirmation does not imply an independently verified purchase.
+// The owner also explicitly confirmed checking purchases for all 41 reviews.
 export const reviews: Review[] = Array.from({ length: 41 }, (_, index) => {
   const color = colors[index % colors.length];
   const previousText =
@@ -102,6 +106,11 @@ export const reviews: Review[] = Array.from({ length: 41 }, (_, index) => {
     text: suppliedNamedTexts[customerNames[index]] ?? previousText,
     colorName: "",
     publishedAt: "2026-11-11",
+    verification: {
+      method: "manual_order_match",
+      verifiedAt: "2026-11-11",
+      verifiedBy: "store_owner",
+    },
     ...([0, 16, 32].includes(index)
       ? {
           image: {

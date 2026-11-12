@@ -72,6 +72,10 @@ h2 em {
   font-weight: 400;
   color: var(--wine);
 }
+:is(h1, h2, h3, h4, h5, h6),
+:is(h1, h2, h3, h4, h5, h6) em {
+  font-style: normal;
+}
 .eyebrow {
   font-size: 10px;
   letter-spacing: 2.3px;
@@ -1335,7 +1339,7 @@ footer {
 .product-heading p {
   font-family: Georgia, serif;
   font-size: 20px;
-  font-style: italic;
+  font-style: normal;
   color: var(--muted);
   margin: 0;
 }
@@ -1965,6 +1969,7 @@ footer {
 }
 .review-art > span em {
   color: #e5bdc6;
+  font-style: normal;
 }
 .review-invitation-copy {
   padding: 42px 12% 42px 10%;
