@@ -655,6 +655,7 @@ function LiveCheckout({ total }: { total: number }) {
         <PaymentElement
           options={{
             layout: "tabs",
+            wallets: { link: "never" },
             fields: { billingDetails: "never" },
             readOnly: busy,
           }}

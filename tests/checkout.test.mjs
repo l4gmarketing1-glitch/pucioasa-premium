@@ -19,6 +19,7 @@ test("custom checkout keeps pricing, variant IDs and free Romanian delivery serv
   assert.equal(params.metadata.color_id, "v04");
   assert.equal(params.metadata.color, "Bej nisipiu");
   assert.deepEqual(params.allowed_payment_method_types, ["card"]);
+  assert.deepEqual(params.wallet_options, { link: { display: "never" } });
   assert.deepEqual(params.shipping_address_collection.allowed_countries, [
     "RO",
   ]);

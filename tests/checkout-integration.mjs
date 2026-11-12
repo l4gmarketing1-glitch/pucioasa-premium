@@ -186,6 +186,7 @@ try {
   );
   const params = new URLSearchParams(requests.at(-1).body);
   assert.equal(params.get("ui_mode"), "elements");
+  assert.equal(params.get("wallet_options[link][display]"), "never");
   assert.equal(params.get("line_items[0][price_data][unit_amount]"), "13950");
   assert.equal(params.get("line_items[0][quantity]"), "2");
   assert.equal(
@@ -199,6 +200,7 @@ try {
   );
   const idempotency = requests.at(-1).headers["idempotency-key"];
   assert.ok(idempotency.includes(requestId));
+  assert.ok(idempotency.startsWith("pp-checkout:no-link-v1:"));
   await send(body);
   assert.equal(requests.at(-1).headers["idempotency-key"], idempotency);
   assert.equal((await send({variants:[],requestId})).status,400);
@@ -269,7 +271,8 @@ try {
               },
             },
           }),
-          createPaymentElement() {
+          createPaymentElement(options) {
+            window.__paymentElementOptions = options;
             const handlers = {};
             return {
               on(event, handler) {
@@ -301,6 +304,7 @@ try {
   await page.waitForFunction(
     () => !document.querySelector(".checkout-pay").disabled,
   );
+  assert.equal(await page.evaluate(() => window.__paymentElementOptions.wallets.link), "never");
   const firstCheckoutKey = requests.filter((r) => r.method === "POST").at(-1)
     .headers["idempotency-key"];
   await page.reload({ waitUntil: "networkidle" });

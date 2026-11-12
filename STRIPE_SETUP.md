@@ -66,3 +66,9 @@ Dacă pagina returnează 404, deployment-ul respectiv nu conține diagnosticul: 
 ### „Cerere neautorizată” la checkout
 
 Acest mesaj indică faptul că antetul Origin al cererii nu corespunde originii din `SITE_URL`; cererea este respinsă înainte de Stripe. Diagnosticul versiunea 2 compară adresa reală a browserului cu originea publică din `SITE_URL`, fără cereri de plată. Valoarea trebuie să corespundă adresei finale din browser. Pentru checkout-ul confirmat de proprietar pe `https://www.pucioasa-premium.ro`, setează `SITE_URL=https://www.pucioasa-premium.ro` în Production; varianta fără www trebuie să redirecționeze către cea principală în Vercel → Domains. Dacă alegi ulterior domeniul fără www ca principal, schimbă atât SITE_URL, cât și direcția redirecționării. Fă Redeploy după schimbarea variabilei și pornește comanda de pe domeniul principal. Un checkout deschis pe adresa Vercel sau pe alt domeniu nu este automat autorizat. Nu elimina verificarea Origin și nu adăuga automat domenii preluate din antete de cerere.
+
+## Checkout fără Link
+
+Link este dezactivat explicit pentru sesiunile magazinului prin `wallet_options.link.display=never` și pentru Payment Element prin `wallets.link=never`. Astfel, checkout-ul nu solicită înscrierea sau salvarea datelor într-un cont Link. Nu este necesară schimbarea contului Stripe sau dezactivarea Link pentru alte integrări ale firmei.
+
+După deploy, reîncarcă pagina de checkout sau pornește o comandă de la produs. Sesiunile noi folosesc un identificator de configurare distinct pentru a evita reutilizarea unei sesiuni mai vechi cu Link activ. Reîncărcările ulterioare ale aceleiași comenzi continuă să reutilizeze sesiunea nouă.

@@ -75,7 +75,8 @@ export async function POST(req: NextRequest) {
         siteUrl,
       ) as Stripe.Checkout.SessionCreateParams,
       {
-        idempotencyKey: `pp-checkout:${body.requestId}:${selection.signature}`,
+        // Separate new sessions from earlier sessions created with Link enabled.
+        idempotencyKey: `pp-checkout:no-link-v1:${body.requestId}:${selection.signature}`,
       },
     );
     if (!session.client_secret)
