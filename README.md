@@ -32,7 +32,7 @@ Validation: `npm test`, `npm run typecheck`, `npm run build`, then `npm start`.
 2. Set variables from `.env.example` through secure project settings, never in Git or chat. Production `SITE_URL` must be `https://pucioasa-premium.ro`.
 3. Start on a protected test deployment with matching `STRIPE_SECRET_KEY=sk_test_…` and `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_…` from the same Stripe account. Configure receipt emails, business information and payment settings. The SDK is Stripe 23 with React Stripe.js 7 and Stripe.js 10. The session uses `ui_mode: elements` and `allowed_payment_method_types`. See [STRIPE_SETUP.md](STRIPE_SETUP.md) for the step-by-step Romanian guide.
 4. Confirm product material, legal company name, CUI, business and return addresses, variant availability, and the ambiguous 25 cm sheet height. The page currently shows 180 × 200 cm, without the tolerance at the merchant's request.
-5. Complete the draft policies in `app/informatii/[slug]/page.tsx`: return shipping costs, reimbursement process, carrier and retention periods. `LEGAL_CONFIRMED=true` confirms actual review; it does not complete these texts automatically.
+5. Review the policies in `app/informatii/[slug]/page.tsx` before setting `LEGAL_CONFIRMED=true`. They use the merchant-supplied name/address, Fan Curier Express, customer-paid ordinary return shipping, seller-paid nonconformity remedies, withdrawal/refund timeframes and retention criteria. Confirm these match actual business practice. The flag records merchant review; it is not a compliance certification.
 6. Set `PRODUCT_CONFIRMED=true`, `LEGAL_CONFIRMED=true`, `STORE_LIVE=true` only after review. With the test key, verify a successful order, rejected payment, cancelled checkout and the complete order in admin. Then switch to the matching live secret/public key pair and redeploy.
 7. Configure `ADMIN_USER` and a random `ADMIN_PASSWORD` of at least 32 characters. Use HTTPS and Vercel access protection. Basic auth supports one administrator; roles, password recovery and audit are not included.
 
@@ -52,7 +52,7 @@ Publish customer testimonials only with author permission and a documented verif
 
 ## Outstanding before launch
 
-Stripe, Vercel and Search Console credentials are not connected here, and no real or Stripe test payment has been executed. The header uses a typographic brand treatment inspired by the supplied logo; the original inline logo is not available as a local asset. All 19 JPG photographs from the ZIP are integrated. The material name Damasc Fine is provided by the merchant; legal business details remain required. The admin panel displays orders but does not manage stock, shipping or refunds.
+Stripe, Vercel and Search Console credentials are not connected here, and no real or Stripe test payment has been executed. The header uses a typographic brand treatment inspired by the supplied logo; the original inline logo is not available as a local asset. All 19 JPG photographs from the ZIP are integrated. The material name Damasc Fine is provided by the merchant. The owner supplied Pucioasa Premium as the trader name and confirmed the business/return address as Strada 8 Martie, fără număr, Pucioasa, județul Dâmbovița, România; these declarations have not been independently checked against a registry. Fiscal-code configuration is optional for checkout activation. Merchant review of the published information and policies remains required. The admin panel displays orders but does not manage stock, shipping or refunds.
 
 ## Reviews
 
@@ -95,3 +95,9 @@ Both product sections share the package, active set and colors. One set is selec
 `/comanda?culori=v04,v03,v12` represents a mixed three-set package. Old `culoare` / `cantitate` links remain supported, including four sets at the standard price. Stripe line items group identical variants at the discounted unit amount; the server ignores client prices. Metadata records the color list, bundle ID and agreed amount for later confirmation and admin display. Confirmation uses this server-created price snapshot so subsequent price edits do not invalidate already-open sessions; legacy sessions retain their old validation. No separate Stripe coupon or product setup is necessary.
 
 Tests cover all tiers, exact totals, mixed/duplicate colors, invalid selections, persistence, synchronized controls, 320px layouts, Stripe session parameters and confirmation. Real Stripe sandbox transactions remain a separate setup step.
+
+## Merchant details and policy review
+
+The legal pages use the owner-confirmed trader name and address as defaults; `BUSINESS_NAME`, `BUSINESS_ADDRESS`, `RETURN_ADDRESS` and `CONTACT_EMAIL` override them. A configured fiscal code is shown; no placeholder fiscal code is published. The readiness checks still require the other company/contact environment variables. `.env.example` contains the supplied public details; copying this file does not update Vercel automatically.
+
+Set `PRODUCT_CONFIRMED=true` after checking the product information, and `LEGAL_CONFIRMED=true` after reviewing the terms, delivery/returns and privacy pages. In particular, confirm the proposed customer-paid ordinary return shipping rule. These flags do not verify legal identity or implement retention/deletion workflows. Production secrets and confirmation flags must be configured in Vercel, followed by a deployment.

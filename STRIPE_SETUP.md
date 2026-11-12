@@ -50,3 +50,9 @@ Comenzile sunt citite direct din Stripe; nu există încă automatizare de livra
 ## Verificări locale
 
 `npm test`, `npm run build`, `node tests/browser.mjs`, `node tests/checkout-integration.mjs`, `node tests/visitor-offer.mjs`. Testul de integrare folosește un server local și un SDK simulat; nu trimite tranzacții la Stripe. Testele locale acoperă prețul calculat pe server, selectarea variantei, cheile test/live, restricția de livrare în România, afișarea fără configurare și prevenirea confirmărilor false. Ele nu înlocuiesc tranzacțiile efectuate în sandbox-ul Stripe, autentificarea bancară sau verificarea datelor reale din panou.
+
+## Confirmările și adresa magazinului
+
+În Vercel, selectează mediul **Production**. Setează `PRODUCT_CONFIRMED` la `true` după verificarea produsului și `LEGAL_CONFIRMED` la `true` după citirea paginilor Termeni și condiții, Livrare și retur și Confidențialitate. Nu este necesar să trimiți aceste valori în chat. Textul propus atribuie clientului costul expedierii unui retur prin retragere; verifică dacă aceasta este politica magazinului înainte de confirmare.
+
+Datele publice furnizate de proprietar sunt `BUSINESS_NAME=Pucioasa Premium`, `BUSINESS_ADDRESS=Strada 8 Martie, fără număr, Pucioasa, județul Dâmbovița, România`, aceeași adresă pentru `RETURN_ADDRESS`, `CONTACT_EMAIL=contact@pucioasa-premium.ro` și `DELIVERY_ESTIMATE=48 de ore`. Paginile folosesc aceste date ca valori implicite; setările Vercel le pot înlocui. Completarea fișierului `.env.example` nu modifică variabilele proiectului Vercel. După salvarea setărilor Production, fă Redeploy.
