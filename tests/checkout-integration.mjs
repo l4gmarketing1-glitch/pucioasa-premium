@@ -157,6 +157,14 @@ try {
     await new Promise((r) => setTimeout(r, 250));
   }
   assert.ok(ready);
+  const diagnosticResponse = await fetch(origin + '/diagnostic');
+  const diagnostic = await diagnosticResponse.text();
+  assert.equal(diagnosticResponse.status, 200);
+  assert.match(diagnosticResponse.headers.get('cache-control'), /no-store/);
+  assert.match(diagnostic, /configurare completată/);
+  assert.match(diagnostic, /autentificare disponibilă/);
+  assert.match(diagnostic, /noindex/);
+  for (const secret of [password, 'sk_test_local_fixture', 'Test fixture', 'test@example.invalid']) assert.ok(!diagnostic.includes(secret));
   const requestId = randomUUID();
   const send = (body, originHeader = origin) =>
     fetch(origin + "/api/checkout", {

@@ -56,3 +56,9 @@ Comenzile sunt citite direct din Stripe; nu există încă automatizare de livra
 În Vercel, selectează mediul **Production**. Setează `PRODUCT_CONFIRMED` la `true` după verificarea produsului și `LEGAL_CONFIRMED` la `true` după citirea paginilor Termeni și condiții, Livrare și retur și Confidențialitate. Nu este necesar să trimiți aceste valori în chat. Textul propus atribuie clientului costul expedierii unui retur prin retragere; verifică dacă aceasta este politica magazinului înainte de confirmare.
 
 Datele publice furnizate de proprietar sunt `BUSINESS_NAME=Pucioasa Premium`, `BUSINESS_ADDRESS=Strada 8 Martie, fără număr, Pucioasa, județul Dâmbovița, România`, aceeași adresă pentru `RETURN_ADDRESS`, `CONTACT_EMAIL=contact@pucioasa-premium.ro` și `DELIVERY_ESTIMATE=48 de ore`. Paginile folosesc aceste date ca valori implicite; setările Vercel le pot înlocui. Completarea fișierului `.env.example` nu modifică variabilele proiectului Vercel. După salvarea setărilor Production, fă Redeploy.
+
+## Diagnostic fără afișarea secretelor
+
+Dacă apare „Pregătim deschiderea magazinului” sau „Administrarea nu este configurată”, deschide `/diagnostic` pe domeniul afectat. Pagina indică exact variabilele care blochează activarea, dacă parola administratorului este absentă/prea scurtă, mediul Vercel și commit-ul publicat. Nu afișează valorile setărilor, parole, chei Stripe sau date ale clienților; este dinamică, fără cache și exclusă de la indexare. Se poate trimite o captură a acestei pagini.
+
+Dacă pagina returnează 404, deployment-ul respectiv nu conține diagnosticul: verifică în Vercel versiunea publicată și asocierea domeniului. Setările salvate după un deployment nu modifică acel deployment; este necesară o nouă publicare pentru Production. Un diagnostic completat validează condițiile locale, nu autentificarea cheilor în contul Stripe sau acceptarea unei plăți.
