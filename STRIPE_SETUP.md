@@ -16,7 +16,7 @@ Checkout-ul magazinului se află la `/comanda`. Pagina, datele de contact, adres
 
 Folosește un preview protejat sau un proiect Vercel separat pentru test; nu activa plata cu chei de test pe domeniul public al magazinului. Mediul de cod de aici nu are cheile Stripe și nu poate confirma o plată reală de test fără configurarea lor.
 
-Checkout-ul este activ doar dacă `STORE_LIVE`, `PRODUCT_CONFIRMED` și `LEGAL_CONFIRMED` sunt `true` și sunt completate `BUSINESS_NAME`, `BUSINESS_CUI`, `BUSINESS_ADDRESS`, `CONTACT_EMAIL`, `DELIVERY_ESTIMATE`, `RETURN_ADDRESS`. Confirmările înseamnă că informațiile au fost efectiv verificate. Paginile legale trebuie completate, nu doar activate prin variabile.
+Checkout-ul este activ doar dacă `STORE_LIVE`, `PRODUCT_CONFIRMED` și `LEGAL_CONFIRMED` sunt `true` și sunt completate `BUSINESS_NAME`, `BUSINESS_ADDRESS`, `CONTACT_EMAIL`, `DELIVERY_ESTIMATE`, `RETURN_ADDRESS`. Confirmările înseamnă că informațiile au fost efectiv verificate. Paginile legale trebuie completate, nu doar activate prin variabile. `BUSINESS_CUI` poate fi completat pentru afișarea datelor firmei, dar absența sa nu blochează tehnic checkout-ul. Această regulă de activare nu stabilește obligațiile de identificare ale comerciantului.
 
 În test, păstrează `VISITOR_OFFER_ENABLED=false` și `OFFER_ENDS_AT` gol pentru a testa plata fără expirarea ofertei. Oferta poate fi verificată separat după ce plata funcționează. Salvează variabilele și fă **Redeploy**; cheia publicabilă trebuie să existe și la build.
 

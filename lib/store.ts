@@ -20,7 +20,6 @@ export function storeReady() {
     ) &&
     [
       "BUSINESS_NAME",
-      "BUSINESS_CUI",
       "BUSINESS_ADDRESS",
       "CONTACT_EMAIL",
       "DELIVERY_ESTIMATE",

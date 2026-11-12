@@ -38,6 +38,8 @@ Validation: `npm test`, `npm run typecheck`, `npm run build`, then `npm start`.
 
 The public Stripe key is required for Payment Element and must be present at build time. Secret and public keys must both be test keys or both be live keys. Never share a secret key in chat or Git. This version reads Stripe directly and has no webhook. Automated stock changes, fulfillment, custom emails and invoices require a signed, idempotent webhook with persistent storage before those operations are added. Review stock handling before accepting sales; this version does not reserve inventory.
 
+`BUSINESS_CUI` is displayed in the company information when configured, but is not a technical checkout activation requirement. The merchant remains responsible for the company disclosures; the product/legal confirmation flags and the other readiness checks still apply.
+
 ## Google Search Console
 
 Verify the domain with Google's DNS TXT record, or verify a URL property using `GOOGLE_SITE_VERIFICATION`. After production launch, submit `https://pucioasa-premium.ro/sitemap.xml` and request indexing of the home page. Technical SEO does not guarantee indexing or ranking. Admin, API and payment confirmation pages are not intended for indexing.

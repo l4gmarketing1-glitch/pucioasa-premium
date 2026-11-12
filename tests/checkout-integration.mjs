@@ -130,7 +130,8 @@ const server = spawn(
       STRIPE_SECRET_KEY: "sk_test_local_fixture",
       NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: "pk_test_local_fixture",
       BUSINESS_NAME: "Test fixture",
-      BUSINESS_CUI: "test",
+      // Missing fiscal-code configuration must not block checkout activation.
+      BUSINESS_CUI: "",
       BUSINESS_ADDRESS: "test",
       CONTACT_EMAIL: "test@example.invalid",
       DELIVERY_ESTIMATE: "48 de ore",
