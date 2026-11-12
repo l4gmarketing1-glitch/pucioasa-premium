@@ -1,5 +1,6 @@
 import "server-only";
 import Stripe from "stripe";
+import { stripeKeysMatch } from "@/lib/checkout.mjs";
 import { visitorOfferEnabled, offerSecret } from "@/lib/visitor-offer";
 export const siteUrl = process.env.SITE_URL || "https://pucioasa-premium.ro";
 export function stripeClient() {
@@ -13,7 +14,10 @@ export function storeReady() {
     process.env.STORE_LIVE === "true" &&
     process.env.PRODUCT_CONFIRMED === "true" &&
     process.env.LEGAL_CONFIRMED === "true" &&
-    Boolean(process.env.STRIPE_SECRET_KEY) &&
+    stripeKeysMatch(
+      process.env.STRIPE_SECRET_KEY,
+      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+    ) &&
     [
       "BUSINESS_NAME",
       "BUSINESS_CUI",

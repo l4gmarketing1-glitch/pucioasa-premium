@@ -1,3 +1,5 @@
+import type Stripe from "stripe";
+import { checkoutParameters } from "@/lib/checkout.mjs";
 import {
   offerCookie,
   offerSecret,
@@ -6,7 +8,7 @@ import {
 import { readOfferToken } from "@/lib/offer-token.mjs";
 import { NextRequest, NextResponse } from "next/server";
 import { stripeClient, storeReady, siteUrl } from "@/lib/store";
-import { product, colors, validateSelection } from "@/lib/catalog.mjs";
+import { product, validateSelection } from "@/lib/catalog.mjs";
 export async function POST(req: NextRequest) {
   if (req.headers.get("origin") !== new URL(siteUrl).origin)
     return NextResponse.json(
@@ -54,48 +56,34 @@ export async function POST(req: NextRequest) {
       { error: "Alege o culoare și între 1 și 5 seturi." },
       { status: 400 },
     );
-  const color = colors.find((c) => c.id === selection.color)!;
-  // Amount, currency and variant labels are always resolved on the server.
+  if (
+    typeof body.requestId !== "string" ||
+    !/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+      body.requestId,
+    )
+  ) {
+    return NextResponse.json(
+      { error: "Reîncarcă pagina de comandă și încearcă din nou." },
+      { status: 400 },
+    );
+  }
+  // Prices and labels are resolved server-side. Retrying the same request reuses the session.
   try {
-    const session = await stripeClient().checkout.sessions.create({
-      mode: "payment",
-      locale: "ro",
-      allowed_payment_method_types: ["card"],
-      billing_address_collection: "auto",
-      shipping_address_collection: { allowed_countries: ["RO"] },
-      phone_number_collection: { enabled: true },
-      line_items: [
-        {
-          quantity: selection.quantity,
-          price_data: {
-            currency: product.currency,
-            unit_amount: product.amount,
-            product_data: {
-              name: product.name,
-              description: `Culoare: ${color.name} · 6 piese`,
-              metadata: { product_id: product.id, color: color.id },
-            },
-          },
-        },
-      ],
-      shipping_options: [
-        {
-          shipping_rate_data: {
-            type: "fixed_amount",
-            fixed_amount: { amount: 0, currency: "ron" },
-            display_name: "Transport gratuit",
-          },
-        },
-      ],
-      metadata: {
-        product_id: product.id,
-        color: color.name,
-        quantity: String(selection.quantity),
+    const session = await stripeClient().checkout.sessions.create(
+      checkoutParameters(
+        selection,
+        siteUrl,
+      ) as Stripe.Checkout.SessionCreateParams,
+      {
+        idempotencyKey: `pp-checkout:${body.requestId}:${selection.color}:${selection.quantity}:${product.amount}`,
       },
-      success_url: `${siteUrl}/comanda/succes?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${siteUrl}/?checkout=cancelled#produs`,
-    });
-    return NextResponse.json({ url: session.url });
+    );
+    if (!session.client_secret)
+      throw new Error("Missing checkout client secret");
+    return NextResponse.json(
+      { clientSecret: session.client_secret, sessionId: session.id },
+      { headers: { "Cache-Control": "no-store" } },
+    );
   } catch {
     console.error("Checkout session creation failed");
     return NextResponse.json(

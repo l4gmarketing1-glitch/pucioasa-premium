@@ -20,23 +20,23 @@ Validation: `npm test`, `npm run typecheck`, `npm run build`, then `npm start`.
 ## Implemented
 
 - Responsive product page with all 19 original photographs and stable variant IDs v01–v19 matching supplied filenames. Session storage remembers the selected variant. Quantities 1–5; amount validated on the server.
-- Hosted Stripe Checkout collects phone, email and Romanian delivery address. Free shipping. Confirmation verifies payment with Stripe.
+- Custom checkout at `/comanda`, using Stripe Checkout Sessions (`ui_mode: elements`) and Payment Element. Our page collects contact, shipping and optional separate billing addresses. Stripe-secured card fields handle payment data. Free shipping and price are enforced on the server. Confirmation verifies the paid session, product, currency and exact amount; retrying session creation uses an idempotency key.
 - `/admin` uses HTTP Basic authentication with a random password of at least 32 characters. Paginated Stripe sessions show customer, delivery address, variant, quantity and payment state. No sample customer data.
 - Orders remain in Stripe; there is no ephemeral local order database. The dashboard is read-only. Refunds are managed in Stripe Dashboard; initial Checkout payment state does not reflect later refunds or shipment state.
 - SEO metadata, canonical, robots, sitemap, Product/Offer structured data and Search Console verification support. Indexing is disabled before launch configuration.
-- The homepage includes a prominently labeled demonstration gallery, without verified-review claims or aggregate rating markup. Genuine reviews are kept separately. No invented stock claims or prior prices; no advertising or analytics trackers.
+- The homepage includes owner-supplied reviews and ratings, with purchase-verification labels based on the owner’s explicit confirmation. No aggregate rating markup, invented stock claims, advertising or analytics trackers.
 
 ## Vercel and Stripe setup
 
 1. Import this repository into Vercel with the Next.js preset. Add `pucioasa-premium.ro`, configure the DNS records Vercel supplies and redirect www to the primary domain.
 2. Set variables from `.env.example` through secure project settings, never in Git or chat. Production `SITE_URL` must be `https://pucioasa-premium.ro`.
-3. Start with a Stripe test secret key. Configure Stripe branding, receipt emails, business information and payment settings. The SDK is Stripe 23 and uses `allowed_payment_method_types`.
+3. Start on a protected test deployment with matching `STRIPE_SECRET_KEY=sk_test_…` and `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_…` from the same Stripe account. Configure receipt emails, business information and payment settings. The SDK is Stripe 23 with React Stripe.js 7 and Stripe.js 10. The session uses `ui_mode: elements` and `allowed_payment_method_types`. See [STRIPE_SETUP.md](STRIPE_SETUP.md) for the step-by-step Romanian guide.
 4. Confirm product material, legal company name, CUI, business and return addresses, variant availability, and the ambiguous 25 cm sheet height. The page currently shows 180 × 200 cm, without the tolerance at the merchant's request.
 5. Complete the draft policies in `app/informatii/[slug]/page.tsx`: return shipping costs, reimbursement process, carrier and retention periods. `LEGAL_CONFIRMED=true` confirms actual review; it does not complete these texts automatically.
-6. Set `PRODUCT_CONFIRMED=true`, `LEGAL_CONFIRMED=true`, `STORE_LIVE=true` only after review. With the test key, verify a successful order, rejected payment, cancelled checkout and the complete order in admin. Then switch to the live key and redeploy.
+6. Set `PRODUCT_CONFIRMED=true`, `LEGAL_CONFIRMED=true`, `STORE_LIVE=true` only after review. With the test key, verify a successful order, rejected payment, cancelled checkout and the complete order in admin. Then switch to the matching live secret/public key pair and redeploy.
 7. Configure `ADMIN_USER` and a random `ADMIN_PASSWORD` of at least 32 characters. Use HTTPS and Vercel access protection. Basic auth supports one administrator; roles, password recovery and audit are not included.
 
-No public Stripe key is needed for hosted checkout. This version reads Stripe directly and has no webhook. Automated stock changes, fulfillment, custom emails and invoices require a signed, idempotent webhook with persistent storage before those operations are added. Review stock handling before accepting sales; this version does not reserve inventory.
+The public Stripe key is required for Payment Element and must be present at build time. Secret and public keys must both be test keys or both be live keys. Never share a secret key in chat or Git. This version reads Stripe directly and has no webhook. Automated stock changes, fulfillment, custom emails and invoices require a signed, idempotent webhook with persistent storage before those operations are added. Review stock handling before accepting sales; this version does not reserve inventory.
 
 ## Google Search Console
 
@@ -54,7 +54,7 @@ Stripe, Vercel and Search Console credentials are not connected here, and no rea
 
 ## Reviews
 
-The reviews section shows a clearly disclosed demonstration gallery followed by the invitation to submit genuine reviews. Once genuine reviews are available, they replace the examples. The accessible modal prepares a `mailto:` message; the customer must send it from their email app. It does not store or automatically publish submissions. After manually verifying a purchase and the publication consent, add only the public fields to `lib/reviews.ts`. Never include the private order reference.
+The reviews section shows the owner-supplied collection followed by an invitation to submit further reviews. The accessible modal prepares a `mailto:` message; the customer must send it from their email app. It does not store or automatically publish submissions. After manually verifying a purchase and the publication consent, add only the public fields to `lib/reviews.ts`. Never include the private order reference.
 
 ## Current pricing and optional 86-minute offer
 
@@ -77,3 +77,9 @@ Both order cards show the same rating badge, calculated from the public review c
 The gallery initially displays seven cards on mobile and eleven on desktop. “Vezi mai multe recenzii” loads seven more on mobile (7 → 14 → 21 → 28 → 35 → 41) or ten more on desktop (11 → 21 → 31 → 41), capped at the available records. Expanded cards remain visible across viewport changes. The gallery has no numerical pagination counters. Review text uses Georgia at 17px desktop and 16px mobile; author names are 18px desktop and 19px mobile.
 
 The homepage hero uses the owner-supplied `public/images/hero-lenjerie-visinie.jpg`. Product variant photographs remain in `public/products/`.
+
+## Custom checkout validation
+
+`npm test` covers server-controlled prices, variant validation, matched test/live keys and paid-session validation. `node tests/browser.mjs` checks the prelaunch checkout, product summary and responsive layout. `node tests/checkout-integration.mjs` uses a local Stripe HTTP fixture and a simulated browser SDK to exercise session parameters, idempotency, retry behavior, separate billing details, double-click protection, server confirmation and admin details. It does not send requests or payments to Stripe. `node tests/visitor-offer.mjs` checks that expired/missing offer tokens still prevent checkout.
+
+A successful real Stripe sandbox payment, declined card and 3D Secure flow remain required after keys are configured. No real or sandbox Stripe transaction was performed in this environment. The page remains safely disabled until configuration is complete. See [STRIPE_SETUP.md](STRIPE_SETUP.md).

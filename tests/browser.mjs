@@ -328,6 +328,24 @@ try {
     ).status,
     403,
   );
+  await page.setViewportSize({width:1440,height:1000});
+  await page.goto(origin + "/comanda?culoare=v04&cantitate=2", {waitUntil:'networkidle'});
+  assert.match(await page.locator('h1').innerText(), /Finalizează comanda/);
+  assert.match(await page.locator('.checkout-product').innerText(), /Bej nisipiu/);
+  assert.match(await page.locator('.checkout-total dd').innerText(), /298/);
+  assert.equal(await page.locator('.checkout-pay').isDisabled(), true);
+  assert.equal(await page.locator('input[name="email"]').isDisabled(), true);
+  assert.equal(await page.locator('iframe').count(),0);
+  assert.match(await page.locator('.checkout-notice').innerText(), /în curs de configurare/);
+  await page.screenshot({path:'/tmp/pucioasa-checkout-desktop.png',fullPage:true});
+  for (const width of [390,320]) {
+    await page.setViewportSize({width,height:844});
+    assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth), `checkout fits at ${width}px`);
+  }
+  await page.setViewportSize({width:390,height:844});
+  await page.screenshot({path:'/tmp/pucioasa-checkout-mobile.png',fullPage:true});
+  await page.goto(origin + '/comanda?culoare=invalid&cantitate=0');
+  assert.match(await page.locator('h1').innerText(), /Alege varianta/);
   await page.goto(origin + "/comanda/succes?session_id=invalid");
   assert.match(await page.locator("h1").innerText(), /Nu putem confirma/);
   for (const slug of ["termeni", "livrare-retur", "confidentialitate"])

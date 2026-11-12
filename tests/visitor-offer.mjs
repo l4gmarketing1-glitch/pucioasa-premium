@@ -5,7 +5,7 @@ import assert from 'node:assert/strict';
 import {createOfferToken} from '../lib/offer-token.mjs';
 const origin='http://localhost:3102';
 const secret=randomBytes(32).toString('hex');
-const server=spawn('node',['node_modules/next/dist/bin/next','start','-p','3102'],{env:{...process.env,SITE_URL:origin,STORE_LIVE:'true',PRODUCT_CONFIRMED:'true',LEGAL_CONFIRMED:'true',STRIPE_SECRET_KEY:'sk_test_local_validation_only',BUSINESS_NAME:'Test fixture',BUSINESS_CUI:'test',BUSINESS_ADDRESS:'test',CONTACT_EMAIL:'test@example.invalid',DELIVERY_ESTIMATE:'48 de ore',RETURN_ADDRESS:'test',VISITOR_OFFER_ENABLED:'true',OFFER_SIGNING_SECRET:secret,OFFER_ENDS_AT:'',REFERENCE_PRICE_RON:''},stdio:'ignore'});
+const server=spawn('node',['node_modules/next/dist/bin/next','start','-p','3102'],{env:{...process.env,SITE_URL:origin,STORE_LIVE:'true',PRODUCT_CONFIRMED:'true',LEGAL_CONFIRMED:'true',STRIPE_SECRET_KEY:'sk_test_local_validation_only',NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:'pk_test_local_validation_only',BUSINESS_NAME:'Test fixture',BUSINESS_CUI:'test',BUSINESS_ADDRESS:'test',CONTACT_EMAIL:'test@example.invalid',DELIVERY_ESTIMATE:'48 de ore',RETURN_ADDRESS:'test',VISITOR_OFFER_ENABLED:'true',OFFER_SIGNING_SECRET:secret,OFFER_ENDS_AT:'',REFERENCE_PRICE_RON:''},stdio:'ignore'});
 let browser;
 try{
  let ready=false;for(let i=0;i<60;i++){try{if((await fetch(origin)).ok){ready=true;break;}}catch{}await new Promise(r=>setTimeout(r,500));}assert.ok(ready);
@@ -22,11 +22,11 @@ try{
  browser=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox']});
  const page=await browser.newPage({viewport:{width:390,height:844},reducedMotion:'reduce'});
  await page.clock.install({time:new Date()});
- await page.goto(origin,{waitUntil:'networkidle'});await page.getByRole('timer').waitFor({state:'visible'});
+ await page.goto(origin,{waitUntil:'networkidle'});await page.locator('#produs').getByRole('timer').waitFor({state:'visible'});
  const saved=await page.context().cookies();const offer=saved.find(c=>c.name==='pp_offer_v1');assert.ok(offer);
- await page.reload({waitUntil:'networkidle'});await page.getByRole('timer').waitFor({state:'visible'});
+ await page.reload({waitUntil:'networkidle'});await page.locator('#produs').getByRole('timer').waitFor({state:'visible'});
  assert.equal((await page.context().cookies()).find(c=>c.name==='pp_offer_v1').value,offer.value);
- await page.clock.fastForward(87*60000);assert.ok(await page.locator('.buy').isDisabled());
- assert.match(await page.locator('.offer-ended').innerText(),/s-a încheiat/);
+ await page.clock.fastForward(87*60000);assert.ok(await page.locator('#produs .buy').isDisabled());
+ assert.match(await page.locator('#produs .offer-ended').innerText(),/s-a încheiat/);
  console.log('PASS: 86-minute signed offer, persisted expiry, rejected missing/tampered/expired offers, and browser expiry. No payment requests sent to Stripe.');
 }finally{await browser?.close();server.kill('SIGTERM');}

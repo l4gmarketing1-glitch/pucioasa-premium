@@ -119,14 +119,13 @@ export default function Storefront({
     setBusy(true);
     setError("");
     try {
-      const res = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ color: selected.id, quantity }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      window.location.assign(data.url);
+      // A deliberate new order gets a new request; reloads inside checkout reuse it.
+      try {
+        sessionStorage.removeItem("pp-checkout-request");
+      } catch {}
+      window.location.assign(
+        `/comanda?culoare=${encodeURIComponent(selected.id)}&cantitate=${quantity}`,
+      );
     } catch (e) {
       setError(
         e instanceof Error ? e.message : "A apărut o eroare. Încearcă din nou.",
@@ -516,7 +515,9 @@ export default function Storefront({
           <div className="hero-copy">
             <h1>
               Cele mai fine și confortabile{" "}
-              <span className="hero-title-accent">lenjerii de pat Pucioasa</span>
+              <span className="hero-title-accent">
+                lenjerii de pat Pucioasa
+              </span>
             </h1>
             <p>
               Te-ai săturat de lenjeriile incomode, care nu oferă un somn
