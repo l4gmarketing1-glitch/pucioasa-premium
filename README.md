@@ -20,7 +20,7 @@ Validation: `npm test`, `npm run typecheck`, `npm run build`, then `npm start`.
 ## Implemented
 
 - Responsive product page with all 19 original photographs and stable variant IDs v01–v19 matching supplied filenames. Session storage remembers the selected package and colors. Choose 1, 2, 3 or 5 sets, with one color per set; totals are recalculated on the server.
-- Custom checkout at `/comanda`, using Stripe Checkout Sessions (`ui_mode: elements`) and Payment Element. Our page collects contact, shipping and optional separate billing addresses. Stripe-secured card fields handle payment data. Free shipping and price are enforced on the server. Confirmation verifies the paid session, product, currency and exact amount; retrying session creation uses an idempotency key.
+- Custom checkout at `/comanda`, using Stripe Checkout Sessions (`ui_mode: elements`) and Payment Element. Our page collects contact and shipping details; the shipping address is also used for billing. Stripe-secured card fields handle payment data. Free shipping and price are enforced on the server. Confirmation verifies the paid session, product, currency and exact amount; retrying session creation uses an idempotency key.
 - `/admin` uses HTTP Basic authentication with a random password of at least 32 characters. Paginated Stripe sessions show customer, delivery address, all selected colors with quantities, total and payment state. No sample customer data.
 - Orders remain in Stripe; there is no ephemeral local order database. The dashboard is read-only. Refunds are managed in Stripe Dashboard; initial Checkout payment state does not reflect later refunds or shipment state.
 - SEO metadata, canonical, robots, sitemap, Product/Offer structured data and Search Console verification support. Indexing is disabled before launch configuration.
@@ -82,7 +82,7 @@ The homepage hero uses the owner-supplied `public/images/hero-lenjerie-visinie.j
 
 ## Custom checkout validation
 
-`npm test` covers server-controlled prices, variant validation, matched test/live keys and paid-session validation. `node tests/browser.mjs` checks the prelaunch checkout, product summary and responsive layout. `node tests/checkout-integration.mjs` uses a local Stripe HTTP fixture and a simulated browser SDK to exercise session parameters, idempotency, retry behavior, separate billing details, double-click protection, server confirmation and admin details. It does not send requests or payments to Stripe. `node tests/visitor-offer.mjs` checks that expired/missing offer tokens still prevent checkout.
+`npm test` covers server-controlled prices, variant validation, matched test/live keys and paid-session validation. `node tests/browser.mjs` checks the prelaunch checkout, product summary and responsive layout. `node tests/checkout-integration.mjs` uses a local Stripe HTTP fixture and a simulated browser SDK to exercise session parameters, idempotency, retry behavior, automatic reuse of shipping details for billing, double-click protection, server confirmation and admin details. It does not send requests or payments to Stripe. `node tests/visitor-offer.mjs` checks that expired/missing offer tokens still prevent checkout.
 
 A successful real Stripe sandbox payment, declined card and 3D Secure flow remain required after keys are configured. No real or sandbox Stripe transaction was performed in this environment. The page remains safely disabled until configuration is complete. See [STRIPE_SETUP.md](STRIPE_SETUP.md).
 

@@ -337,16 +337,12 @@ try {
     await page.locator("form").evaluate((form) => form.checkValidity()),
     true,
   );
-  await page.locator('[name="sameBilling"]').uncheck();
-  assert.equal(
-    await page.locator("form").evaluate((form) => form.checkValidity()),
-    false,
-  );
-  await fill("billingName", "Facturare Test");
-  await fill("billingLine1", "Strada Facturare 2");
-  await fill("billingCity", "Bucuresti");
-  await fill("billingState", "Sector 1");
-  await fill("billingPostal", "010001");
+  assert.equal(await page.locator('[name="sameBilling"], [name^="billing"]').count(), 0);
+  assert.equal(await page.locator('.checkout-consent a').count(), 0);
+  assert.equal(await page.locator('.checkout-footer a').count(), 3);
+  assert.equal(await page.locator('.checkout-back').innerText(), 'Înapoi');
+  assert.equal(await page.locator('.checkout-heading > p').innerText(), 'Completează datele de livrare și confirmă comanda.');
+  assert.equal(await page.locator('.checkout-delivery').innerText(), 'Livrarea este gratuită în maxim 48 de ore.');
   await page.locator(".checkout-pay").dblclick();
   await page
     .getByRole("alert")
@@ -358,7 +354,7 @@ try {
   assert.equal(args.phoneNumber, "+40755436284");
   assert.equal(args.shippingAddress.address.country, "RO");
   assert.equal(args.shippingAddress.address.line1, "Strada Test 1");
-  assert.equal(args.billingAddress.name, "Facturare Test");
+  assert.deepEqual(args.billingAddress, args.shippingAddress);
   assert.equal(args.redirect, "if_required");
   assert.equal(
     await page.locator('[name="shippingName"]').inputValue(),
@@ -400,7 +396,7 @@ try {
     assert.ok(adminText.includes(value));
   assert.deepEqual(errors, []);
   console.log(
-    "PASS (local Stripe fixtures, not real payments): custom session API, server prices, idempotency, failure handling, contact/shipping/billing transfer, double-click protection, retry preservation, server-confirmed success and admin details.",
+    "PASS (local Stripe fixtures, not real payments): custom session API, server prices, idempotency, failure handling, simplified checkout copy, automatic shipping-to-billing transfer, double-click protection, retry preservation, server-confirmed success and admin details.",
   );
 } finally {
   await browser?.close();

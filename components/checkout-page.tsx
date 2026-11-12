@@ -175,17 +175,14 @@ export default function CheckoutPage(props: Props) {
       </header>
       <main className="checkout-main">
         <Link href="/#produs" className="checkout-back">
-          <ArrowLeft size={15} /> Înapoi la produs
+          <ArrowLeft size={15} /> Înapoi
         </Link>
         <div className="checkout-heading">
           <span className="eyebrow">ULTIMUL PAS CĂTRE CONFORT</span>
           <h1>
             Finalizează <span>comanda.</span>
           </h1>
-          <p>
-            Completează datele de livrare și plătește securizat. Fără să creezi
-            un cont.
-          </p>
+          <p>Completează datele de livrare și confirmă comanda.</p>
         </div>
         <div className="checkout-layout">
           <div className="checkout-form-panel">
@@ -282,8 +279,7 @@ export default function CheckoutPage(props: Props) {
               </div>
             </dl>
             <p className="checkout-delivery">
-              <Truck size={18} /> Livrarea este gratuită în maxim 48 de ore prin
-              Fan Curier Express
+              <Truck size={18} /> Livrarea este gratuită în maxim 48 de ore.
             </p>
             <p className="checkout-security">
               <ShieldCheck size={18} /> Datele cardului sunt procesate securizat
@@ -308,20 +304,14 @@ export default function CheckoutPage(props: Props) {
   );
 }
 
-function AddressFields({
-  prefix,
-  billing = false,
-}: {
-  prefix: string;
-  billing?: boolean;
-}) {
+function AddressFields({ prefix }: { prefix: string }) {
   return (
     <div className="checkout-fields">
       <label className="checkout-field checkout-wide">
         Nume și prenume
         <input
           name={`${prefix}Name`}
-          autoComplete={`${billing ? "billing" : "shipping"} name`}
+          autoComplete="shipping name"
           required
           maxLength={100}
         />
@@ -330,7 +320,7 @@ function AddressFields({
         Stradă și număr
         <input
           name={`${prefix}Line1`}
-          autoComplete={`${billing ? "billing" : "shipping"} address-line1`}
+          autoComplete="shipping address-line1"
           required
           maxLength={200}
         />
@@ -339,7 +329,7 @@ function AddressFields({
         Bloc, scară, apartament <span>(opțional)</span>
         <input
           name={`${prefix}Line2`}
-          autoComplete={`${billing ? "billing" : "shipping"} address-line2`}
+          autoComplete="shipping address-line2"
           maxLength={200}
         />
       </label>
@@ -347,7 +337,7 @@ function AddressFields({
         Localitate
         <input
           name={`${prefix}City`}
-          autoComplete={`${billing ? "billing" : "shipping"} address-level2`}
+          autoComplete="shipping address-level2"
           required
           maxLength={100}
         />
@@ -356,7 +346,7 @@ function AddressFields({
         Județ / sector
         <input
           name={`${prefix}State`}
-          autoComplete={`${billing ? "billing" : "shipping"} address-level1`}
+          autoComplete="shipping address-level1"
           required
           maxLength={100}
         />
@@ -365,7 +355,7 @@ function AddressFields({
         Cod poștal
         <input
           name={`${prefix}Postal`}
-          autoComplete={`${billing ? "billing" : "shipping"} postal-code`}
+          autoComplete="shipping postal-code"
           inputMode="numeric"
           pattern="[0-9]{6}"
           title="Codul poștal are 6 cifre."
@@ -375,11 +365,7 @@ function AddressFields({
       </label>
       <label className="checkout-field">
         Țară
-        <input
-          value="România"
-          readOnly
-          autoComplete={`${billing ? "billing" : "shipping"} country-name`}
-        />
+        <input value="România" readOnly autoComplete="shipping country-name" />
       </label>
     </div>
   );
@@ -400,7 +386,6 @@ function OrderForm({
   error?: string;
   onSubmit?: (event: FormEvent<HTMLFormElement>) => void;
 }) {
-  const [sameBilling, setSameBilling] = useState(true);
   return (
     <form
       className="checkout-form"
@@ -438,22 +423,7 @@ function OrderForm({
       <fieldset disabled={disabled || busy}>
         <legend>Unde livrăm?</legend>
         <AddressFields prefix="shipping" />
-        <label className="checkout-checkbox">
-          <input
-            type="checkbox"
-            name="sameBilling"
-            checked={sameBilling}
-            onChange={(event) => setSameBilling(event.target.checked)}
-          />
-          <span>Adresa de facturare este aceeași cu adresa de livrare.</span>
-        </label>
       </fieldset>
-      {!sameBilling && (
-        <fieldset disabled={disabled || busy}>
-          <legend>Adresa de facturare</legend>
-          <AddressFields prefix="billing" billing />
-        </fieldset>
-      )}
       <section className="checkout-payment">
         <div className="checkout-payment-heading">
           <h2>Plată securizată cu cardul</h2>
@@ -473,23 +443,8 @@ function OrderForm({
           disabled={disabled || busy}
         />
         <span>
-          Am citit și accept{" "}
-          <Link
-            href="/informatii/termeni"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Termenii și condițiile
-          </Link>
-          . Datele sunt prelucrate conform{" "}
-          <Link
-            href="/informatii/confidentialitate"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Politicii de confidențialitate
-          </Link>
-          .
+          Am citit și accept Termenii și condițiile. Datele sunt prelucrate
+          conform Politicii de confidențialitate.
         </span>
       </label>
       {error && (
@@ -559,19 +514,13 @@ function LiveCheckout({ total }: { total: number }) {
     const data = new FormData(event.currentTarget);
     if (data.get("terms") !== "on") return;
     const shippingAddress = contact(data, "shipping");
-    const billingAddress =
-      data.get("sameBilling") === "on"
-        ? shippingAddress
-        : contact(data, "billing");
+    const billingAddress = shippingAddress;
     if (
       !shippingAddress.name ||
       !shippingAddress.address.line1 ||
-      !shippingAddress.address.city ||
-      !billingAddress.name ||
-      !billingAddress.address.line1 ||
-      !billingAddress.address.city
+      !shippingAddress.address.city
     ) {
-      setError("Completează numele și adresa de livrare și facturare.");
+      setError("Completează numele și adresa de livrare.");
       return;
     }
     if (
