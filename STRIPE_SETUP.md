@@ -43,7 +43,7 @@ Documentație oficială: https://docs.stripe.com/testing
 
 ## 4. Trecerea în producție
 
-După testele de mai sus, configurează pentru Production perechea `sk_live_…` / `pk_live_…`, `SITE_URL=https://pucioasa-premium.ro` și datele reale ale firmei. Activează contul Stripe și verifică datele firmei, contul bancar, plățile cu cardul și emailurile de chitanță în Stripe Dashboard. Redeploy după modificarea cheilor. O pereche de chei test/live amestecată dezactivează checkout-ul.
+După testele de mai sus, configurează pentru Production perechea `sk_live_…` / `pk_live_…`, `SITE_URL` egal cu adresa finală a magazinului din browser (de exemplu `https://www.pucioasa-premium.ro`) și datele reale ale firmei. Activează contul Stripe și verifică datele firmei, contul bancar, plățile cu cardul și emailurile de chitanță în Stripe Dashboard. Redeploy după modificarea cheilor. O pereche de chei test/live amestecată dezactivează checkout-ul.
 
 Comenzile sunt citite direct din Stripe; nu există încă automatizare de livrare, gestiune de stoc sau facturare. Nu este nevoie de webhook pentru acest panou care citește Stripe direct. Pentru automatizări viitoare este necesar un webhook semnat, cu procesare idempotentă și stocare persistentă. Un client care închide browserul după plată rămâne înregistrat în Stripe și poate fi văzut în panoul de comenzi.
 
@@ -62,3 +62,7 @@ Datele publice furnizate de proprietar sunt `BUSINESS_NAME=Pucioasa Premium`, `B
 Dacă apare „Pregătim deschiderea magazinului” sau „Administrarea nu este configurată”, deschide `/diagnostic` pe domeniul afectat. Pagina indică exact variabilele care blochează activarea, dacă parola administratorului este absentă/prea scurtă, mediul Vercel și commit-ul publicat. Nu afișează valorile setărilor, parole, chei Stripe sau date ale clienților; este dinamică, fără cache și exclusă de la indexare. Se poate trimite o captură a acestei pagini.
 
 Dacă pagina returnează 404, deployment-ul respectiv nu conține diagnosticul: verifică în Vercel versiunea publicată și asocierea domeniului. Setările salvate după un deployment nu modifică acel deployment; este necesară o nouă publicare pentru Production. Un diagnostic completat validează condițiile locale, nu autentificarea cheilor în contul Stripe sau acceptarea unei plăți.
+
+### „Cerere neautorizată” la checkout
+
+Acest mesaj indică faptul că antetul Origin al cererii nu corespunde originii din `SITE_URL`; cererea este respinsă înainte de Stripe. Diagnosticul versiunea 2 compară adresa reală a browserului cu originea publică din `SITE_URL`, fără cereri de plată. Valoarea trebuie să corespundă adresei finale din browser. Pentru checkout-ul confirmat de proprietar pe `https://www.pucioasa-premium.ro`, setează `SITE_URL=https://www.pucioasa-premium.ro` în Production; varianta fără www trebuie să redirecționeze către cea principală în Vercel → Domains. Dacă alegi ulterior domeniul fără www ca principal, schimbă atât SITE_URL, cât și direcția redirecționării. Fă Redeploy după schimbarea variabilei și pornește comanda de pe domeniul principal. Un checkout deschis pe adresa Vercel sau pe alt domeniu nu este automat autorizat. Nu elimina verificarea Origin și nu adăuga automat domenii preluate din antete de cerere.

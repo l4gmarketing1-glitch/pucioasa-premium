@@ -1,4 +1,6 @@
 import Link from "next/link";
+import DomainDiagnostic from "@/components/domain-diagnostic";
+import { siteUrl } from "@/lib/store";
 import { currentStoreConfigurationIssues } from "@/lib/configuration";
 import { adminConfigurationIssues } from "@/lib/configuration.mjs";
 
@@ -32,7 +34,7 @@ export default function DiagnosticPage() {
         clienților.
       </p>
       <p>
-        Versiune diagnostic: <strong>1</strong>
+        Versiune diagnostic: <strong>2</strong>
         <br />
         Commit: <code>{commit}</code>
         <br />
@@ -54,11 +56,13 @@ export default function DiagnosticPage() {
         </ul>
       ) : (
         <p>
-          Toate condițiile locale de activare a comenzilor sunt îndeplinite.
-          Această verificare nu validează cheile în contul Stripe și nu inițiază
-          o plată.
+          Setările serverului pentru activarea comenzilor sunt completate.
+          Verifică și corespondența adresei pentru checkout de mai jos. Această
+          verificare nu validează cheile în contul Stripe și nu inițiază o
+          plată.
         </p>
       )}
+      <DomainDiagnostic configuredOrigin={new URL(siteUrl).origin} />
       <h2>
         Administrare:{" "}
         {adminIssues.length

@@ -28,8 +28,8 @@ Validation: `npm test`, `npm run typecheck`, `npm run build`, then `npm start`.
 
 ## Vercel and Stripe setup
 
-1. Import this repository into Vercel with the Next.js preset. Add `pucioasa-premium.ro`, configure the DNS records Vercel supplies and redirect www to the primary domain.
-2. Set variables from `.env.example` through secure project settings, never in Git or chat. Production `SITE_URL` must be `https://pucioasa-premium.ro`.
+1. Import this repository into Vercel with the Next.js preset. Add `pucioasa-premium.ro` and its www variant, configure the DNS records Vercel supplies, and redirect the secondary hostname to the primary domain. The owner currently opens checkout on `www.pucioasa-premium.ro`.
+2. Set variables from `.env.example` through secure project settings, never in Git or chat. Production `SITE_URL` must exactly match the final browser origin, currently `https://www.pucioasa-premium.ro`, without a checkout path or query string.
 3. Start on a protected test deployment with matching `STRIPE_SECRET_KEY=sk_test_…` and `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_…` from the same Stripe account. Configure receipt emails, business information and payment settings. The SDK is Stripe 23 with React Stripe.js 7 and Stripe.js 10. The session uses `ui_mode: elements` and `allowed_payment_method_types`. See [STRIPE_SETUP.md](STRIPE_SETUP.md) for the step-by-step Romanian guide.
 4. Confirm product material, legal company name, CUI, business and return addresses, variant availability, and the ambiguous 25 cm sheet height. The page currently shows 180 × 200 cm, without the tolerance at the merchant's request.
 5. Review the policies in `app/informatii/[slug]/page.tsx` before setting `LEGAL_CONFIRMED=true`. They use the merchant-supplied name/address, Fan Curier Express, customer-paid ordinary return shipping, seller-paid nonconformity remedies, withdrawal/refund timeframes and retention criteria. Confirm these match actual business practice. The flag records merchant review; it is not a compliance certification.
