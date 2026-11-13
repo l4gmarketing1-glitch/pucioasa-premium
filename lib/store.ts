@@ -1,7 +1,8 @@
 import "server-only";
 import Stripe from "stripe";
 import { currentStoreConfigurationIssues } from "@/lib/configuration";
-export const siteUrl = process.env.SITE_URL || "https://pucioasa-premium.ro";
+import { siteOrigin } from "@/lib/seo.mjs";
+export const siteUrl = siteOrigin();
 export function stripeClient() {
   if (!process.env.STRIPE_SECRET_KEY)
     throw new Error("Stripe nu este configurat.");

@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { product } from "@/lib/catalog.mjs";
 import { notFound } from "next/navigation";
+import { informationPages } from "@/lib/seo.mjs";
+import { publicPageMetadata } from "@/lib/seo";
+import { siteUrl } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
 const titles: Record<string, string> = {
@@ -16,7 +19,10 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  return { title: titles[(await params).slug] || "Informații" };
+  const { slug } = await params;
+  const info = informationPages[slug];
+  if (!Object.hasOwn(informationPages, slug)) notFound();
+  return publicPageMetadata(siteUrl, `${info.title} | Pucioasa Premium`, info.description, `/informatii/${slug}`);
 }
 
 export default async function Legal({
