@@ -20,8 +20,8 @@ test('canonicals and sitemap use one origin and only public URLs', () => {
   assert.throws(() => siteOrigin('https://user:password@example.com'));
   assert.deepEqual(sitemapUrls(origin, false), []);
   const urls = sitemapUrls(origin, true);
-  assert.equal(urls.length, 4);
-  assert.equal(new Set(urls).size, 4);
+  assert.equal(urls.length, 9);
+  assert.equal(new Set(urls).size, 9);
   assert.ok(urls.includes(`${origin}/informatii/livrare-retur`));
   assert.ok(urls.every(u => !/comanda|admin|api|diagnostic|\?/.test(u)));
 });

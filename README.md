@@ -109,3 +109,7 @@ See [NOTIFICATIONS_SETUP.md](NOTIFICATIONS_SETUP.md) for Resend domain verificat
 ## SEO configuration and validation
 
 See [SEO_SETUP.md](SEO_SETUP.md) for production domain settings, Search Console DNS verification, sitemap submission and post-deployment checks. Public pages have canonical URLs, distinct descriptions, social metadata and catalog-based Product structured data. Indexing follows the merchant launch flags and excludes preview/local environments, independently of payment credentials. `node tests/seo-http.mjs` checks production, preview and prelaunch HTML after a build.
+
+## Editorial guides
+
+Five Romanian guides live under `/ghiduri/[slug]`, with separate metadata, Article/BreadcrumbList structured data and responsive article layouts. They are linked from the sitemap and from one another; the existing homepage and menu are unchanged. See the route list and publishing checks in [SEO_SETUP.md](SEO_SETUP.md). Content and related-guide links are maintained in `lib/guides.mjs`.
