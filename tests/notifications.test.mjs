@@ -60,7 +60,7 @@ test('Romanian PDF includes diacritics, historical prices and clearly identifies
   assert.match(text, /Dâmbovița/);
   assert.match(text, /Vișiniu/);
   assert.match(text, /279,00 lei/);
-  assert.match(text, /Nu reprezintă factură fiscală/);
+  assert.match(text, /Confirmare comandă/);
 });
 
 test('customer and merchant receive separate escaped messages and PDF attachments', async () => {
