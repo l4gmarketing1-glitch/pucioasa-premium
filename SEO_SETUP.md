@@ -3,7 +3,7 @@
 ## Implementat în cod
 
 - Titlu principal: „Lenjerii de pat Pucioasa, 6 piese | Pucioasa Premium”. Descriere cu materialul Damasc Fine, prețul actual din catalog, 19 culori și transport gratuit în România.
-- Adrese canonice pe prima pagină și pe paginile informative, fără parametri de campanie; metadate Open Graph și Twitter complete, cu fotografia produsului.
+- Adrese canonice pe prima pagină și pe paginile informative, fără parametri de campanie; metadate Open Graph și Twitter complete, cu logo-ul Pucioasa Premium.
 - Descrieri distincte pentru termeni, livrare/retur și confidențialitate.
 - Sitemap cu cele nouă pagini publice: homepage, trei pagini informative și cinci ghiduri. Nicio adresă de comandă, confirmare a plății, administrare sau diagnostic în sitemap.
 - Date structurate Product cu material, cod intern, fotografii, culori, preț și politica de livrare/retur. Oferta apare numai când magazinul poate accepta comenzi și termenul global al ofertei nu a expirat. Nu sunt inventate stocuri, coduri GTIN sau ratinguri agregate.
@@ -80,3 +80,12 @@ Conținutul este în `lib/guides.mjs`. Dimensiunile produsului preiau informați
 Fiecare pagină are un titlu și o descriere distincte, canonical propriu, metadate sociale și schema Article + BreadcrumbList, care descrie conținutul vizibil. Regula existentă de noindex pentru Preview și prelaunch se aplică și ghidurilor. Nu se publică o listă separată la `/ghiduri`; există exact cele cinci adrese din tabel.
 
 După merge și Production Ready, sitemapul existent va avea nouă adrese. Nu este necesar un sitemap nou. În Search Console, inspectează fiecare adresă de ghid, testează URL-ul live și solicită indexarea. Urmărește apoi indexarea și interogările reale; accesibilitatea tehnică nu garantează poziții în rezultate.
+
+
+## Logo pentru share și favicon
+
+Logo-ul furnizat de proprietar a fost adaptat în două variante: logo complet pe fundal alb pentru distribuire și simbolul patului pentru iconițe. Imaginea socială este `public/brand/share-logo-v1.jpg`, 1200 × 630 px; este folosită în Open Graph și Twitter pe homepage, paginile informative și ghiduri. Fotografiile produselor și imaginile din datele structurate Article/Product rămân specifice conținutului.
+
+Next.js publică automat iconițele din `app/favicon.ico` (16, 32 și 48 px), `app/icon.png` (48 px) și `app/apple-icon.png` (180 px). Iconițele folosesc doar simbolul grafic pentru lizibilitate la scară mică.
+
+După merge și deployment, browserele și platformele de share pot afișa temporar vechea imagine din cache. Verifică mai întâi metadatele și imaginea la URL-ul public. Pentru Facebook folosește Sharing Debugger și reîmprospătarea previzualizării; cache-ul platformelor poate întârzia afișarea noilor imagini. Actualizarea faviconului în Google nu este instantanee.
