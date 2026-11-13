@@ -34,7 +34,27 @@ try {
       assert.equal(await page.locator('meta[property="og:site_name"]').getAttribute('content'), 'Pucioasa Premium');
       assert.equal(await page.locator('meta[name="twitter:card"]').getAttribute('content'), 'summary_large_image');
       const image = await page.locator('meta[property="og:image"]').getAttribute('content');
-      assert.equal((await fetch(origin + new URL(image).pathname)).status, 200);
+      assert.equal(image, `${canonical}/brand/share-logo-v1.jpg`);
+      assert.equal(await page.locator('meta[property="og:image:width"]').getAttribute('content'), '1200');
+      assert.equal(await page.locator('meta[property="og:image:height"]').getAttribute('content'), '630');
+      assert.equal(await page.locator('meta[name="twitter:image"]').getAttribute('content'), image);
+      const shareResponse = await fetch(origin + new URL(image).pathname);
+      assert.equal(shareResponse.status, 200);
+      assert.match(shareResponse.headers.get('content-type'), /image\/jpeg/);
+      const favicon = await fetch(`${origin}/favicon.ico`);
+      assert.equal(favicon.status, 200);
+      const ico = Buffer.from(await favicon.arrayBuffer());
+      assert.equal(ico.readUInt16LE(2), 1);
+      assert.equal(ico.readUInt16LE(4), 3);
+      for (const [selector, dimension] of [['link[rel="icon"][type="image/png"]', 48], ['link[rel="apple-touch-icon"]', 180]]) {
+        const href = await page.locator(selector).getAttribute('href');
+        const icon = await fetch(new URL(href, origin));
+        assert.equal(icon.status, 200);
+        assert.match(icon.headers.get('content-type'), /image\/png/);
+        const png = Buffer.from(await icon.arrayBuffer());
+        assert.equal(png.readUInt32BE(16), dimension);
+        assert.equal(png.readUInt32BE(20), dimension);
+      }
       const robotsMeta = await page.locator('meta[name="robots"]').getAttribute('content');
       const robots = await (await fetch(`${origin}/robots.txt`)).text();
       const sitemap = await (await fetch(`${origin}/sitemap.xml`)).text();
@@ -75,6 +95,8 @@ try {
         assert.equal(await page.locator('link[rel="canonical"]').getAttribute('href'), `${canonical}/ghiduri/${guide.slug}`);
         assert.equal(await page.locator('meta[name="description"]').getAttribute('content'), guide.description);
         assert.equal(await page.locator('meta[property="og:type"]').getAttribute('content'), 'article');
+        assert.equal(await page.locator('meta[property="og:image"]').getAttribute('content'), `${canonical}/brand/share-logo-v1.jpg`);
+        assert.equal(await page.locator('meta[name="twitter:image"]').getAttribute('content'), `${canonical}/brand/share-logo-v1.jpg`);
         assert.equal(await page.locator('article section').count(), guide.sections.length + 1);
         assert.equal(await page.locator('a[href^="/ghiduri/"]').count(), guide.related.length);
         assert.ok(await page.locator('a[href="/#produs"]').count() > 0);

@@ -16,8 +16,7 @@ export async function generateMetadata({ params }: Props) {
   const metadata = publicPageMetadata(siteUrl, `${guide.metaTitle} | Pucioasa Premium`, guide.description, `/ghiduri/${guide.slug}`);
   return {
     ...metadata,
-    openGraph: { ...metadata.openGraph, type: 'article' as const, images: [{ url: guide.image, alt: guide.imageAlt }] },
-    twitter: { ...metadata.twitter, images: [guide.image] },
+    openGraph: { ...metadata.openGraph, type: 'article' as const },
   };
 }
 
