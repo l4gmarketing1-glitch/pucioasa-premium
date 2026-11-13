@@ -45,7 +45,7 @@ Documentație oficială: https://docs.stripe.com/testing
 
 După testele de mai sus, configurează pentru Production perechea `sk_live_…` / `pk_live_…`, `SITE_URL` egal cu adresa finală a magazinului din browser (de exemplu `https://www.pucioasa-premium.ro`) și datele reale ale firmei. Activează contul Stripe și verifică datele firmei, contul bancar, plățile cu cardul și emailurile de chitanță în Stripe Dashboard. Redeploy după modificarea cheilor. O pereche de chei test/live amestecată dezactivează checkout-ul.
 
-Comenzile sunt citite direct din Stripe; nu există încă automatizare de livrare, gestiune de stoc sau facturare. Nu este nevoie de webhook pentru acest panou care citește Stripe direct. Pentru automatizări viitoare este necesar un webhook semnat, cu procesare idempotentă și stocare persistentă. Un client care închide browserul după plată rămâne înregistrat în Stripe și poate fi văzut în panoul de comenzi.
+Comenzile sunt citite direct din Stripe; nu există încă automatizare de livrare, gestiune de stoc sau facturare. Nu este nevoie de webhook pentru acest panou care citește Stripe direct. Pentru emailuri și confirmări PDF există acum un webhook opțional semnat, cu marcaje de trimitere în sesiunea Stripe și emailuri prin Resend, fără Neon. Activarea este descrisă în `NOTIFICATIONS_SETUP.md`; documentul PDF nu este factură fiscală. Un client care închide browserul după plată rămâne înregistrat în Stripe și poate fi văzut în panoul de comenzi.
 
 ## Verificări locale
 

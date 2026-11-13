@@ -13,6 +13,7 @@ test("custom checkout keeps pricing, variant IDs and free Romanian delivery serv
     "https://pucioasa-premium.ro",
   );
   assert.equal(params.ui_mode, "elements");
+  assert.deepEqual(params.invoice_creation, { enabled: false });
   assert.equal(params.line_items[0].price_data.unit_amount, 13950);
   assert.equal(params.line_items[0].quantity, 2);
   assert.equal(params.line_items[0].price_data.currency, "ron");

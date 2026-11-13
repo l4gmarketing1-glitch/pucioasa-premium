@@ -284,8 +284,7 @@ export default function CheckoutPage(props: Props) {
               <Truck size={18} /> Livrarea este gratuită în maxim 48 de ore.
             </p>
             <p className="checkout-security">
-              <ShieldCheck size={18} /> Datele cardului sunt procesate securizat
-              de Stripe.
+              <ShieldCheck size={18} /> Datele cardului sunt procesate securizat.
             </p>
             <a className="product-help" href="tel:+40755436284">
               <Phone size={17} />
