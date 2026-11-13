@@ -199,18 +199,22 @@ export default async function Legal({
           <p>
             Vercel găzduiește site-ul. Stripe procesează plățile și păstrează
             datele introduse la checkout; magazinul nu primește numărul complet
-            al cardului sau codul CVC. Datele necesare livrării, precum numele,
+            al cardului sau codul CVC. Când confirmările prin email sunt activate,
+            Resend transmite emailurile tranzacționale și confirmările PDF,
+            care includ datele de contact și livrare. Starea trimiterii este
+            înregistrată în metadatele comenzii Stripe. Datele necesare livrării, precum numele,
             telefonul și adresa, sunt comunicate Fan Curier Express. Datele pot
             fi comunicate autorităților și furnizorilor de servicii contabile în
             măsura necesară îndeplinirii obligațiilor legale.
           </p>
           <p>
-            Serviciile Vercel și Stripe pot implica prelucrarea datelor în afara
+            Serviciile Vercel, Stripe și Resend pot implica prelucrarea datelor în afara
             Spațiului Economic European, în condițiile mecanismelor de transfer
             aplicabile. Detalii despre practicile furnizorilor sunt disponibile
             în politicile{" "}
             <a href="https://vercel.com/legal/privacy-policy">Vercel</a> și{" "}
-            <a href="https://stripe.com/privacy">Stripe</a>.
+            <a href="https://stripe.com/privacy">Stripe</a> și{" "}
+            <a href="https://resend.com/legal/privacy-policy">Resend</a>.
           </p>
           <h2>Păstrarea datelor</h2>
           <p>

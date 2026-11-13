@@ -193,8 +193,8 @@ export default function Storefront({
     >
       {!compact && (
         <div className="product-heading">
-          <span className="eyebrow">ALEGE CE ȚI SE POTRIVEȘTE</span>
-          <p>O culoare nouă. Un sentiment familiar.</p>
+          <span className="eyebrow">Fabricate în Pucioasa</span>
+          <p>Din cel mai fin Damasc.</p>
         </div>
       )}
       <div className="product-grid">
