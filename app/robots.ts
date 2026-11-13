@@ -1,12 +1,15 @@
 import type { MetadataRoute } from "next";
-import { siteUrl, storeReady } from "@/lib/store";
+import { siteUrl } from "@/lib/store";
+import { indexingAllowed } from "@/lib/seo.mjs";
+export const dynamic = 'force-dynamic';
 export default function robots(): MetadataRoute.Robots {
   return {
-    rules: storeReady()
+    rules: indexingAllowed()
       ? {
           userAgent: "*",
           allow: "/",
-          disallow: ["/admin", "/api/", "/comanda", "/diagnostic"],
+          // Checkout/diagnostic remain crawlable so their noindex can be read.
+          disallow: ["/admin", "/api/"],
         }
       : { userAgent: "*", disallow: "/" },
     sitemap: `${siteUrl}/sitemap.xml`,

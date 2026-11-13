@@ -1,24 +1,32 @@
-import { product } from "@/lib/catalog.mjs";
 import type { Metadata } from "next";
 import "./globals.css";
-import { siteUrl, storeReady } from "@/lib/store";
-export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
-  title: {
-    default: "Pucioasa Premium — Lenjerii de pat, 6 piese",
-    template: "%s | Pucioasa Premium",
-  },
-  description: `Lenjerii de pat Pucioasa Premium: set de 6 piese, ${product.amount / 100} lei. Transport gratuit. Alege varianta potrivită dormitorului tău.`,
-  robots: { index: storeReady(), follow: storeReady() },
-  verification: { google: process.env.GOOGLE_SITE_VERIFICATION },
-  openGraph: {
-    locale: "ro_RO",
-    type: "website",
-    siteName: "Pucioasa Premium",
-    title: "Un dormitor în care abia aștepți să revii.",
-    description: `Set de lenjerie de pat, 6 piese · ${product.amount / 100} lei · Transport gratuit`,
-  },
-};
+import { siteUrl } from "@/lib/store";
+import { brandName, homeSeo, indexingAllowed, socialImage } from "@/lib/seo.mjs";
+export function generateMetadata(): Metadata {
+  const index = indexingAllowed();
+  return {
+    metadataBase: new URL(siteUrl),
+    title: {
+      default: homeSeo.title,
+      template: "%s | Pucioasa Premium",
+    },
+    description: homeSeo.description,
+    robots: {
+      index, follow: index,
+      googleBot: { index, follow: index, 'max-image-preview': 'large' },
+    },
+    verification: { google: process.env.GOOGLE_SITE_VERIFICATION },
+    openGraph: {
+      locale: "ro_RO",
+      type: "website",
+      siteName: brandName,
+      title: homeSeo.title,
+      description: homeSeo.description,
+      images: [socialImage],
+    },
+    twitter: { card: 'summary_large_image', title: homeSeo.title, description: homeSeo.description, images: [socialImage.url] },
+  };
+}
 export default function RootLayout({
   children,
 }: {

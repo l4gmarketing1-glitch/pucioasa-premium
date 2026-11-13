@@ -1,3 +1,7 @@
 import type { MetadataRoute } from 'next';
-import {siteUrl,storeReady} from '@/lib/store';
-export default function sitemap():MetadataRoute.Sitemap{return storeReady()?[{url:siteUrl,changeFrequency:'weekly',priority:1}]:[];}
+import { siteUrl } from '@/lib/store';
+import { indexingAllowed, sitemapUrls } from '@/lib/seo.mjs';
+export const dynamic = 'force-dynamic';
+export default function sitemap(): MetadataRoute.Sitemap {
+  return sitemapUrls(siteUrl, indexingAllowed()).map(url => ({ url }));
+}
