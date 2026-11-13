@@ -5,7 +5,7 @@
 - Titlu principal: „Lenjerii de pat Pucioasa, 6 piese | Pucioasa Premium”. Descriere cu materialul Damasc Fine, prețul actual din catalog, 19 culori și transport gratuit în România.
 - Adrese canonice pe prima pagină și pe paginile informative, fără parametri de campanie; metadate Open Graph și Twitter complete, cu fotografia produsului.
 - Descrieri distincte pentru termeni, livrare/retur și confidențialitate.
-- Sitemap cu cele patru pagini publice. Nicio adresă de comandă, confirmare a plății, administrare sau diagnostic în sitemap.
+- Sitemap cu cele nouă pagini publice: homepage, trei pagini informative și cinci ghiduri. Nicio adresă de comandă, confirmare a plății, administrare sau diagnostic în sitemap.
 - Date structurate Product cu material, cod intern, fotografii, culori, preț și politica de livrare/retur. Oferta apare numai când magazinul poate accepta comenzi și termenul global al ofertei nu a expirat. Nu sunt inventate stocuri, coduri GTIN sau ratinguri agregate.
 - Indexarea publică depinde de lansarea magazinului, nu de disponibilitatea cheilor de plată. Versiunile Vercel Preview, dezvoltarea locală și magazinul nelansat rămân noindex.
 - Checkoutul și diagnosticul păstrează noindex și sunt accesibile crawlerelor ca acestea să poată citi instrucțiunea. Admin și API sunt excluse în robots.txt. Robots.txt nu este un mecanism de securitate; autentificarea admin rămâne necesară.
@@ -21,7 +21,7 @@ Pentru indexare, `STORE_LIVE`, `PRODUCT_CONFIRMED` și `LEGAL_CONFIRMED` trebuie
 Deschide apoi:
 
 - `https://www.pucioasa-premium.ro/robots.txt` — trebuie să permită pagina publică, fără `Disallow: /` global.
-- `https://www.pucioasa-premium.ro/sitemap.xml` — trebuie să conțină homepage și cele trei pagini informative, pe domeniul final.
+- `https://www.pucioasa-premium.ro/sitemap.xml` — trebuie să conțină homepage, cele trei pagini informative și cele cinci ghiduri, pe domeniul final.
 - Sursa homepage — canonical pe domeniul final și robots `index, follow`.
 
 Verificările automate locale acoperă aceste rezultate, dar nu confirmă configurarea efectivă a Vercel sau ceea ce Google vede după publicare. Accesul direct la domeniul public este restricționat în actualul mediu Codex; nu s-au măsurat indicatorii Core Web Vitals ai site-ului live și nu s-a confirmat indexarea în Google.
@@ -61,3 +61,22 @@ node tests/seo-http.mjs
 ```
 
 Testul HTTP verifică HTML-ul randat pe server, cu JavaScript dezactivat, în trei configurații: Production lansat, Preview și prelaunch. Verifică meta robots, canonical, sitemap, imagini sociale, paginile informative, răspunsul 404 și excluderea checkoutului din indexare. Nu contactează Stripe și nu efectuează plăți.
+
+
+## Cele cinci ghiduri editoriale
+
+Ghidurile sunt la adrese separate. Homepage-ul și meniul existent nu au linkuri către ele; ghidurile se leagă între ele și către produs. Sunt publice pentru orice vizitator care ajunge la URL, nu sunt ascunse prin CSS și nu afișează conținut diferit pentru Google. Sitemapul permite descoperirea fără a modifica homepage-ul, dar indexarea nu este garantată.
+
+| Adresă | Subiect principal |
+| --- | --- |
+| `/ghiduri/ce-contine-o-lenjerie-de-pat-6-piese` | Componentele setului, cantități și formele fețelor de pernă |
+| `/ghiduri/cum-alegi-dimensiunea-lenjeriei-de-pat` | Măsurarea saltelei, pilotei și pernelor |
+| `/ghiduri/cum-alegi-culoarea-lenjeriei-de-pat` | Asortare, lumină și exemple de palete din colecție |
+| `/ghiduri/lenjerii-damasc-fine-ghid-de-alegere` | Denumirea comercială, eticheta și comparația produselor |
+| `/ghiduri/cum-speli-si-intretii-lenjeria-de-pat` | Sortare, spălare, uscare și depozitare, cu prioritate pentru etichetă |
+
+Conținutul este în `lib/guides.mjs`. Dimensiunile produsului preiau informațiile afișate în pagina principală; la schimbarea specificațiilor, actualizează și ghidurile relevante. Nu au fost presupuse procente ale fibrelor, certificări, temperaturi de spălare sau compatibilitatea cu o anumită înălțime de saltea. Subiectele sunt alese după întrebări utile cumpărătorilor și oferta existentă, nu după date măsurate de volum al căutărilor.
+
+Fiecare pagină are un titlu și o descriere distincte, canonical propriu, metadate sociale și schema Article + BreadcrumbList, care descrie conținutul vizibil. Regula existentă de noindex pentru Preview și prelaunch se aplică și ghidurilor. Nu se publică o listă separată la `/ghiduri`; există exact cele cinci adrese din tabel.
+
+După merge și Production Ready, sitemapul existent va avea nouă adrese. Nu este necesar un sitemap nou. În Search Console, inspectează fiecare adresă de ghid, testează URL-ul live și solicită indexarea. Urmărește apoi indexarea și interogările reale; accesibilitatea tehnică nu garantează poziții în rezultate.
