@@ -1328,6 +1328,11 @@ footer {
   padding-top: 66px;
   padding-bottom: 65px;
 }
+
+/* The reviews' bottom margin supplies the spacing above the final selector. */
+#comanda.product-section {
+  padding-top: 0;
+}
 .product-heading {
   display: flex;
   justify-content: space-between;
