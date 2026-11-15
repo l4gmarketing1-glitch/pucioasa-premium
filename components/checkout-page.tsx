@@ -295,11 +295,7 @@ export default function CheckoutPage(props: Props) {
             </a>
           </aside>
         </div>
-        <nav className="checkout-footer" aria-label="Informații despre comandă">
-          <Link href="/informatii/termeni">Termeni și condiții</Link>
-          <Link href="/informatii/confidentialitate">Confidențialitate</Link>
-          <Link href="/informatii/livrare-retur">Livrare și retur</Link>
-        </nav>
+        <div className="checkout-bottom-spacing" aria-hidden="true" />
       </main>
     </div>
   );

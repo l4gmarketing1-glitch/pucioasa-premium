@@ -3075,7 +3075,7 @@ footer {
 .checkout-notice a { font-weight: 600; white-space: nowrap; }
 .checkout-notice p { margin-bottom: 10px; }
 .checkout-retry { color: var(--wine); padding: 7px 0; background: none; border: 0; text-decoration: underline; font: inherit; }
-.checkout-footer { display: flex; justify-content: center; flex-wrap: wrap; gap: 15px 24px; font-size: 11px; color: var(--muted); padding: 28px 0 5px; }
+.checkout-bottom-spacing { padding: 14px 0 2.5px; }
 @media (max-width: 760px) {
   .checkout-header { padding: 18px 6%; min-height: 82px; }
   .checkout-header .brand > span { font-size: 24px; }
