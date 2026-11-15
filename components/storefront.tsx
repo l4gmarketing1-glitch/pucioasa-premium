@@ -620,8 +620,8 @@ export default function Storefront({
           <a href="#detalii" onClick={() => setMenu(false)}>
             Ce conține setul
           </a>
-          <a href="#intrebari" onClick={() => setMenu(false)}>
-            Întrebări frecvente
+          <a href="#recenzii" onClick={() => setMenu(false)}>
+            Recenzii
           </a>
         </nav>
         <a href="tel:+40755436284" className="header-phone">
