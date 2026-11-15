@@ -44,7 +44,7 @@ export default function ReviewsGallery({
       )}
       <div className="showcase-header">
         <div>
-          {!demo && <span className="eyebrow">EXPERIENȚE DE ACASĂ</span>}
+          {!demo && <span className="eyebrow">EXPERIENȚELE CLIENȚILOR</span>}
           <h2>
             {demo ? "Un loc pentru" : "Păreri care fac"}
             <br />
@@ -66,11 +66,9 @@ export default function ReviewsGallery({
                   fill
                   sizes="(max-width: 760px) 85vw, (max-width: 1050px) 44vw, 30vw"
                 />
-                <figcaption>
-                  {entry.image.kind === "customer" && !demo
-                    ? "Fotografie trimisă de client"
-                    : "Fotografie de produs"}
-                </figcaption>
+                {entry.image.kind === "customer" && !demo && (
+                  <figcaption>Fotografie trimisă de client</figcaption>
+                )}
               </figure>
             )}
             <div className="review-card-content">
