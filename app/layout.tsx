@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { siteUrl } from "@/lib/store";
+import Mouseflow from "@/components/mouseflow";
 import { brandName, homeSeo, indexingAllowed, socialImage } from "@/lib/seo.mjs";
 export function generateMetadata(): Metadata {
   const index = indexingAllowed();
@@ -34,7 +35,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ro">
-      <body>{children}</body>
+      <body>{children}<Mouseflow /></body>
     </html>
   );
 }
