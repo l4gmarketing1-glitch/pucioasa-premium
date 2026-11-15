@@ -432,18 +432,6 @@ function OrderForm({
         </div>
         {payment}
       </section>
-      <label className="checkout-checkbox checkout-consent">
-        <input
-          type="checkbox"
-          name="terms"
-          required
-          disabled={disabled || busy}
-        />
-        <span>
-          Am citit și accept Termenii și condițiile. Datele sunt prelucrate
-          conform Politicii de confidențialitate.
-        </span>
-      </label>
       {error && (
         <p className="form-error" role="alert">
           {error}
@@ -509,7 +497,6 @@ function LiveCheckout({ total }: { total: number }) {
   async function pay(event: FormEvent<HTMLFormElement>) {
     if (submitting.current || !paymentReady) return;
     const data = new FormData(event.currentTarget);
-    if (data.get("terms") !== "on") return;
     const shippingAddress = contact(data, "shipping");
     const billingAddress = shippingAddress;
     if (

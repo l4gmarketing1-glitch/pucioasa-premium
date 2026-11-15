@@ -328,18 +328,14 @@ try {
   await fill("shippingCity", "Pucioasa");
   await fill("shippingState", "Dambovita");
   await fill("shippingPostal", "135400");
-  assert.equal(
-    await page.locator("form").evaluate((form) => form.checkValidity()),
-    false,
-  );
-  await page.locator('[name="terms"]').check();
+  assert.equal(await page.locator('[name="terms"]').count(), 0);
   assert.equal(
     await page.locator("form").evaluate((form) => form.checkValidity()),
     true,
   );
   assert.equal(await page.locator('[name="sameBilling"], [name^="billing"]').count(), 0);
   assert.equal(await page.locator('.checkout-consent a').count(), 0);
-  assert.equal(await page.locator('.checkout-footer a').count(), 3);
+  assert.equal(await page.locator('.checkout-footer a').count(), 0);
   assert.equal(await page.locator('.checkout-back').innerText(), 'Înapoi');
   assert.equal(await page.locator('.checkout-heading > p').innerText(), 'Completează datele de livrare și confirmă comanda.');
   assert.equal(await page.locator('.checkout-delivery').innerText(), 'Livrarea este gratuită în maxim 48 de ore.');
