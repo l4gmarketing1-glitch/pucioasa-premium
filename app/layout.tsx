@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { siteUrl } from "@/lib/store";
 import Mouseflow from "@/components/mouseflow";
+import GoogleTagManager from "@/components/google-tag-manager";
 import { brandName, homeSeo, indexingAllowed, socialImage } from "@/lib/seo.mjs";
 export function generateMetadata(): Metadata {
   const index = indexingAllowed();
@@ -35,7 +36,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ro">
-      <body>{children}<Mouseflow /></body>
+      <body>{children}<Mouseflow /><GoogleTagManager /></body>
     </html>
   );
 }

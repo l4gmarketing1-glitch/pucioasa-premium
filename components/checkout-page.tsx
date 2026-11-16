@@ -563,12 +563,12 @@ function LiveCheckout({ total }: { total: number }) {
           Această sesiune a fost finalizată. Verifică starea comenzii înainte de
           a plasa o comandă nouă.
         </p>
-        <Link
+        <a
           className="text-link"
           href={`/comanda/succes?session_id=${encodeURIComponent(checkout.id)}`}
         >
           Vezi starea comenzii <ArrowRight size={16} />
-        </Link>
+        </a>
       </div>
     );
   }
