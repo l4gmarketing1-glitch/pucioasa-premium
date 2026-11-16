@@ -12,8 +12,10 @@ const requests = [];
 let failCreate = false;
 let paymentStatus = "paid";
 let wrongAmount = false;
+let liveMode = false;
 const fakeSession = () => ({
   id: "cs_test_local",
+  livemode: liveMode,
   object: "checkout.session",
   mode: "payment",
   status: "complete",
@@ -226,6 +228,15 @@ try {
     args: ["--no-sandbox"],
   });
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const googleRequests = [];
+  // Never send fixture conversions to Google.
+  await page.route("https://www.googletagmanager.com/**", (route) => {
+    googleRequests.push(route.request().url());
+    return route.fulfill({ contentType: "application/javascript", body: "" });
+  });
+  const conversions = () => page.evaluate(() =>
+    (window.dataLayer || []).filter((entry) => entry[0] === "event" && entry[1] === "conversion").map((entry) => entry[2]),
+  );
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
   // Simulate only the SDK contract to test our form. No payment/card data is sent.
@@ -367,13 +378,33 @@ try {
   await page.locator(".checkout-pay").click();
   await page.waitForURL("**/comanda/succes?session_id=cs_test_local");
   assert.match(await page.locator("h1").innerText(), /mulțumim/);
+  assert.deepEqual(await conversions(), [], "test payments do not count as Ads purchases");
+  liveMode = true;
+  await page.reload();
+  await page.waitForFunction(() => (window.dataLayer || []).some((entry) => entry[1] === "conversion"));
+  const expectedConversion = {
+    send_to: "AW-18578712774/4q77CLjQzbkdEMbRgptF",
+    transaction_id: "cs_test_local",
+    value: 279,
+    currency: "RON",
+  };
+  assert.deepEqual(await conversions(), [expectedConversion]);
+  assert.equal(await page.locator("#google-tag-manager").count(), 0);
+  assert.equal(await page.locator("#google-ads-tag").count(), 1);
+  assert.ok(googleRequests.includes("https://www.googletagmanager.com/gtag/js?id=AW-18578712774"));
+  await page.reload();
+  await page.waitForFunction(() => (window.dataLayer || []).some((entry) => entry[1] === "conversion"));
+  assert.deepEqual(await conversions(), [expectedConversion], "reload keeps the transaction ID for Google deduplication");
   paymentStatus = "unpaid";
   await page.reload();
   assert.match(await page.locator("h1").innerText(), /Verificăm plata/);
+  assert.deepEqual(await conversions(), [], "unpaid orders do not trigger conversions");
+  assert.equal(await page.locator("#google-ads-tag").count(), 0);
   paymentStatus = "paid";
   wrongAmount = true;
   await page.reload();
   assert.match(await page.locator("h1").innerText(), /Verificăm plata/);
+  assert.deepEqual(await conversions(), [], "incorrect order totals do not trigger conversions");
   wrongAmount = false;
   const admin = await fetch(origin + "/admin", {
     headers: {

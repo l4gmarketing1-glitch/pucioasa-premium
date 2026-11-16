@@ -24,7 +24,7 @@ Validation: `npm test`, `npm run typecheck`, `npm run build`, then `npm start`.
 - `/admin` uses HTTP Basic authentication with a random password of at least 32 characters. Paginated Stripe sessions show customer, delivery address, all selected colors with quantities, total and payment state. No sample customer data.
 - Orders remain in Stripe; there is no ephemeral local order database. The dashboard is read-only. Refunds are managed in Stripe Dashboard; initial Checkout payment state does not reflect later refunds or shipment state.
 - SEO metadata, canonical, robots, sitemap, Product/Offer structured data and Search Console verification support. Indexing is disabled before launch configuration.
-- The homepage includes owner-supplied reviews and ratings, with purchase-verification labels based on the owner’s explicit confirmation. No aggregate rating markup, invented stock claims, advertising or analytics trackers.
+- The homepage includes owner-supplied reviews and ratings, with purchase-verification labels based on the owner’s explicit confirmation. No aggregate rating markup or invented stock claims.
 
 ## Vercel and Stripe setup
 
@@ -39,6 +39,12 @@ Validation: `npm test`, `npm run typecheck`, `npm run build`, then `npm start`.
 The public Stripe key is required for Payment Element and must be present at build time. Secret and public keys must both be test keys or both be live keys. Never share a secret key in chat or Git. The order dashboard reads Stripe directly. A signed webhook now supports optional Resend order emails and PDF order confirmations, using delivery markers in the existing Stripe session and Resend idempotency (no separate database); see [NOTIFICATIONS_SETUP.md](NOTIFICATIONS_SETUP.md). These PDFs are not fiscal invoices. Stock changes, fulfillment and fiscal invoicing are not automated. Review stock handling before accepting sales; this version does not reserve inventory.
 
 `BUSINESS_CUI` is displayed in the company information when configured, but is not a technical checkout activation requirement. The merchant remains responsible for the company disclosures; the product/legal confirmation flags and the other readiness checks still apply.
+
+## Google Ads conversion tracking
+
+Google Tag Manager container `GTM-TRDXKM5N` loads outside `/comanda/succes` and `/felicitari`. On `/comanda/succes`, the separate Google Ads tag sends conversion `AW-18578712774/4q77CLjQzbkdEMbRgptF` only after server-side validation of a paid, completed, live Stripe store session. It sends the session ID as `transaction_id` for Google Ads deduplication, the verified amount in RON and no customer contact or address fields. Test-mode, unpaid, invalid and incorrect-total sessions do not emit the conversion. No GA4 integration is added by this code. Consent management is not implemented by this integration; the GTM container's published tags and consent configuration must be reviewed separately.
+
+`node tests/checkout-integration.mjs` intercepts Google scripts and checks the conversion payload, stable transaction ID after reload, test-mode suppression and unpaid/incorrect-total suppression without sending conversions to Google.
 
 ## Google Search Console
 

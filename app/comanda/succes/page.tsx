@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { stripeClient } from "@/lib/store";
 import { isPaidStoreSession } from "@/lib/checkout.mjs";
+import GoogleAdsConversion from "@/components/google-ads-conversion";
 export const metadata = {
   title: "Confirmare comandă",
   robots: { index: false, follow: false },
@@ -14,16 +15,25 @@ export default async function Success({
   const { session_id } = await searchParams;
   let paid = false;
   let found = false;
+  let conversion: { transactionId: string; value: number; currency: string } | null = null;
   if (session_id?.startsWith("cs_") && process.env.STRIPE_SECRET_KEY) {
     try {
       const session =
         await stripeClient().checkout.sessions.retrieve(session_id);
       found = session.metadata?.product_id === "lenjerie-6-piese";
       paid = isPaidStoreSession(session);
+      if (paid && session.livemode && session.amount_total !== null && session.currency) {
+        conversion = {
+          transactionId: session.id,
+          value: session.amount_total / 100,
+          currency: session.currency.toUpperCase(),
+        };
+      }
     } catch {}
   }
   return (
     <main className="message-page">
+      {conversion && <GoogleAdsConversion {...conversion} />}
       <span className="eyebrow">PUCIOASA PREMIUM</span>
       <div className="success-icon">{paid ? "✓" : "○"}</div>
       <h1>

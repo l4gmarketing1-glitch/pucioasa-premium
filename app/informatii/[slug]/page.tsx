@@ -245,8 +245,12 @@ export default async function Legal({
             Dacă este activă oferta personală de 86 de minute, folosim un cookie
             necesar pentru a păstra termenul acesteia între vizite, timp de până
             la un an. Acesta nu conține date de identificare și nu se
-            reînnoiește la reîncărcarea paginii. Nu sunt instalate instrumente
-            de publicitate sau analiză. Câmpurile de plată Stripe pot utiliza
+            reînnoiește la reîncărcarea paginii. Site-ul integrează Google Tag
+            Manager și Mouseflow pentru măsurare și analiză. După confirmarea
+            unei plăți reale, eticheta Google Ads transmite identificatorul
+            tranzacției, valoarea și moneda pentru măsurarea conversiilor din
+            reclame; acest eveniment nu include numele, adresa, telefonul sau
+            emailul clientului. Câmpurile de plată Stripe pot utiliza
             tehnologii necesare procesării și prevenirii fraudei.
           </p>
           <h2>Drepturile tale</h2>
