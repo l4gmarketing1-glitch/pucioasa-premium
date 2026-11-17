@@ -272,7 +272,12 @@ export default function Storefront({
           </p>
           <div className="divider" />
           <fieldset className="bundle-options">
-            <legend>Alege oferta</legend>
+            <legend>
+              <span className="offer-heading">
+                <span>Alege oferta</span>
+                <span className="stock-notice">Stoc limitat</span>
+              </span>
+            </legend>
             {bundleOffers.map((offer) => {
               const savings = product.amount * offer.quantity - offer.amount;
               return (

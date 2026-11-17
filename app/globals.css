@@ -3125,6 +3125,10 @@ footer {
 .bundle-option-price > strong { font-family: Georgia, serif; color: var(--wine); font-size: 24px; font-weight: 400; white-space: nowrap; }
 .bundle-option-price > strong > span { font-size: 12px; }
 .bundle-option-price > small { color: #58714c; font-size: 10px; }
+.bundle-options > legend { width: 100%; }
+.offer-heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px 12px; }
+.stock-notice { display: inline-flex; align-items: center; gap: 6px; padding: 5px 9px; border: 1px solid #e5cdd3; border-radius: 5px; background: #f9eff2; color: var(--wine); font-size: 11px; font-weight: 500; line-height: 1.3; white-space: nowrap; }
+.stock-notice::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
 .bundle-color-selection { margin: 0 0 19px; }
 .bundle-color-selection > p { font-size: 12px; font-weight: 500; line-height: 1.6; margin: 0 0 11px; }
 .bundle-color-selection > p > span { display: block; font-size: 11px; font-weight: 400; color: var(--muted); }
