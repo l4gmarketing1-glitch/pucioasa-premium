@@ -644,10 +644,11 @@ export default function Storefront({
               </span>
             </h1>
             <p>
-              Te-ai săturat de lenjeriile incomode care nu oferă un somn
-              odihnitor? Te-ai săturat de calitatea slabă care se degradează
-              după câteva spălări? Alege lenjeriile de pat Pucioasa premium și
-              simte diferența.
+              Noua colecție de lenjerii Pucioasa premium aduce confortul la tine
+              în dormitor. Realizate din cel mai fin Damasc, cu o textură fină și
+              plăcută la atingere, lenjeriile îți oferă un plus de răsfăț în fiecare
+              seară. Alege culoarea preferată și bucură-te de un somn mai profund,
+              noapte de noapte.
             </p>
             <a href="#produs" className="primary">
               Alege culoarea și comandă <ArrowRight size={19} />
