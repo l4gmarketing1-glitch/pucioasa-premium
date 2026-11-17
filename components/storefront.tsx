@@ -694,7 +694,7 @@ export default function Storefront({
                 {product.amount / 100} <span>lei</span>
               </strong>
               <span className="badge-rule" />
-              <small>COLECȚIA PREMIUM</small>
+              <small>Noua Colecție</small>
             </div>
           </div>
         </section>
