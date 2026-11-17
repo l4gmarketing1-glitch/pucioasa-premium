@@ -2325,6 +2325,7 @@ footer {
     grid-template-columns: 1fr;
   }
   .review-art {
+    display: none;
     min-height: 180px;
     padding: 24px 20px;
     gap: 12px;
@@ -2341,6 +2342,7 @@ footer {
   }
   .review-invitation-copy {
     padding: 29px 8% 30px;
+    border-radius: 10px;
   }
   .review-invitation-copy h3 {
     font-size: 29px;
