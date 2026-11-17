@@ -192,10 +192,7 @@ export default function Storefront({
       aria-labelledby={compact ? "comanda-title" : "produs-title"}
     >
       {!compact && (
-        <div className="product-heading">
-          <span className="eyebrow">Fabricate în Pucioasa</span>
-          <p>Din cel mai fin Damasc.</p>
-        </div>
+        <div className="product-heading" aria-hidden="true" />
       )}
       <div className="product-grid">
         <div className="gallery">
@@ -647,10 +644,10 @@ export default function Storefront({
               </span>
             </h1>
             <p>
-              Te-ai săturat de lenjeriile incomode, care nu oferă un somn
+              Te-ai săturat de lenjeriile incomode care nu oferă un somn
               odihnitor? Te-ai săturat de calitatea slabă care se degradează
-              după câteva spălări? Comandă lenjeriile de pat Pucioasa din Damasc
-              Fine de la Pucioasa Premium și scapă de aceste probleme.
+              după câteva spălări? Alege lenjeriile de pat Pucioasa premium și
+              simte diferența.
             </p>
             <a href="#produs" className="primary">
               Alege culoarea și comandă <ArrowRight size={19} />

@@ -44,7 +44,7 @@ export default function ReviewsGallery({
       )}
       <div className="showcase-header">
         <div>
-          {!demo && <span className="eyebrow">EXPERIENȚELE CLIENȚILOR</span>}
+          {!demo && <span className="eyebrow">RECENZII ADEVARATE</span>}
           <h2>
             {demo ? "Un loc pentru" : "Păreri care fac"}
             <br />
